@@ -1,8 +1,8 @@
 <template>
   <el-header>
     <div>
-      <img src="../../assets/heima.png" alt />
-      <span>电商后台管理系统</span>
+      <img style="width:60px;height:60px" src="../../assets/logo.jpg" alt />
+      <span>购物街后台管理系统</span>
     </div>
     <el-button type="info" @click="logout">退出</el-button>
   </el-header>
