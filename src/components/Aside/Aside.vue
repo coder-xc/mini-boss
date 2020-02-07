@@ -20,7 +20,7 @@
           <span>首页</span>
         </template>
         <!-- 二级菜单 -->
-        <el-menu-item index="/welcome">
+        <el-menu-item index="/home">
           <template slot="title">
             <i class="el-icon-s-home"></i>
             <span>首页</span>
@@ -39,6 +39,42 @@
           </template>
         </el-menu-item>
       </el-submenu>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
+          <span>商品管理</span>
+        </template>
+        <el-menu-item index="/category">
+          <template slot="title">
+            <!-- <i class="el-icon-picture"></i> -->
+            <span>分类列表</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="4">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
+          <span>权限管理</span>
+        </template>
+        <el-menu-item index="/userlist">
+          <template slot="title">
+            <!-- <i class="el-icon-picture"></i> -->
+            <span>用户管理</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+            <el-submenu index="5">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
+          <span>活动管理</span>
+        </template>
+        <el-menu-item index="/active">
+          <template slot="title">
+            <!-- <i class="el-icon-picture"></i> -->
+            <span>首页活动</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
     </el-menu>
   </el-aside>
 </template>
@@ -48,13 +84,13 @@ export default {
   props: {
     currentPath: {
       type: String,
-      value: ''
+      value: ""
     }
   },
   data() {
     return {
       // 是否折叠
-      isCollapse: false,
+      isCollapse: false
     };
   },
 
@@ -63,9 +99,7 @@ export default {
       this.isCollapse = !this.isCollapse;
     },
     logout() {}
-  },
-
-  
+  }
 };
 </script>
 

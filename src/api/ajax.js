@@ -3,11 +3,10 @@
  */
 import Vue from 'vue'
 import axios from 'axios';
-import qs from 'qs';
+import router from '../router'
+import store from '../vuex/store'
 let v = new Vue()
-
 const baseURL = ''
-
 const instance = axios.create({
   timeout: 10000, // 设置请求超时时间
   baseURL: baseURL + '/api'
@@ -17,12 +16,25 @@ const instance = axios.create({
  * 添加请求拦截器, 处理post请求参数(从对象转换为urlencoding)
  */
 instance.interceptors.request.use((config) => {
-  if (config.method.toUpperCase() === 'POST' && (config.data instanceof FormData) === false && config.data instanceof Object) {
-    config.data = qs.stringify(config.data)
+  if (config.data && (config.data instanceof FormData) === false) {
+    config.data = JSON.parse(JSON.stringify(config.data))
+    for (let item in config.data) {
+      if (config.data[item] === "") {
+        delete config.data[item]
+      }
+    }
+  }
+  
+  const token = store.state.adminUser.token
+  if(token) {
+    config.headers['Authorization'] = token
+  } else {
+    if(config.headers.checkToken) {
+      throw new Error('授权失败，请重新登录')
+    }
   }
   return config
 })
-
 /**
  * 添加响应拦截器
  *  成功回调: 成功的结果不再是response, 而是response.data
@@ -31,8 +43,29 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   response => response.data,
   error => {
-    v.$message.error(error.message);
-    return new Promise(() => {}) // 返回一个pedding状态的promise
+    // 1. 没有token直接发请求的错误
+    if(!error.response) {
+      if(router.currentRoute.path !== '/login') {
+        v.$message.error(error.message)
+        router.replace('/login')
+      }
+    } else {
+      // 2. 发了请求, 但token失效了
+      if(error.response.status === 401) {
+        store.dispatch('logout')
+        if(router.currentRoute.path !== '/login') {
+          v.$message.error('授权失败，请重新登录!')
+          router.replace('/login')
+        }
+      } else if(error.response.status === 404) {
+        v.$message.error('您请求的资源不存在!')
+      } else if(error.response.status === 400) {
+        v.$message.error('用户名或密码错误!')
+      } else {
+        v.$message.error('请求错误，请检查网络后重试!')
+      }
+    }
+    return new Promise(() => { }) // 返回一个pedding状态的promise
   }
 )
 

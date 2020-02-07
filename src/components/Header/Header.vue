@@ -12,7 +12,21 @@
 export default {
   methods: {
     logout() {
-
+      this.$confirm("确定退出登录吗?", "退出登录", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$store.dispatch('logout')
+          this.$router.replace('/login')
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消退出"
+          });
+        });
     }
   }
 };

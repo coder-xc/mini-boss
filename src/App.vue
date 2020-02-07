@@ -9,8 +9,21 @@
 </style>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "app",
-  
+
+  mounted() {
+    if (this.token) {
+      this.$store.dispatch("saveUser");
+    } else {
+      this.$router.replace("/login");
+    }
+  },
+  computed: {
+    ...mapState({
+      token: state => state.adminUser.token
+    })
+  }
 };
 </script>

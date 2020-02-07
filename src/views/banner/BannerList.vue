@@ -54,9 +54,9 @@
 
       <!-- 分页区域 -->
       <div style="text-align:right">
-        <el-pagination 
-          layout="total, sizes, prev, pager, next, jumper" 
-          :total="total" 
+        <el-pagination
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
           background
           @size-change="handleSizeChange"
           @current-change="handlePageChange"
@@ -69,14 +69,13 @@
     <el-dialog
       :title="addBannerForm.title ? '修改轮播图' : '添加轮播图'"
       :visible.sync="isShowDialog"
-      width="30%"
       :before-close="beforeCloseDialog"
     >
-      <el-form :model="addBannerForm" :rules="addBannerRules" ref="ruleForm" label-width="70px">
+      <el-form :model="addBannerForm" :rules="addBannerRules" ref="form" label-width="70px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="addBannerForm.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <el-form-item label="图片">
+        <el-form-item label="图片" ref="uploadForm" prop="img">
           <el-upload
             action="#"
             list-type="picture-card"
@@ -132,10 +131,13 @@ export default {
       isShowDialog: false,
       addBannerForm: {
         title: "",
-        index: 1
+        index: 1,
+        img: "123"
       },
       addBannerRules: {
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }]
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        img: [{ required: true, message: "请添加图片", trigger: "change" }],
+        index: [{ required: true, message: "请选择权重", trigger: "blur" }]
       },
       dialogImageUrl: "",
       dialogVisible: false,
@@ -164,23 +166,24 @@ export default {
      * pageSize 改变时会触发
      */
     handleSizeChange(newPageSize) {
-      console.log(newPageSize)
+      console.log(newPageSize);
     },
     /**
      * currentPage 改变时会触发
      */
     handlePageChange(newPage) {
-      console.log(newPage)
+      console.log(newPage);
     },
 
     /**
      * 监听upload组件图片改变
      */
     async handleChange(file, fileList) {
-      // console.log(this.$refs.upload)
       this.hideUpload = fileList.length >= this.limitCount;
       const files = file.raw;
       const result = await uploadImg(files);
+      this.addBannerForm.img = 'imgurl'
+      this.$refs.form.validateField("img");
       this.imgUrl = result.url;
       this.dialogImageUrl = result.url;
       return false;
@@ -196,6 +199,8 @@ export default {
         return fileItem.uid === file.uid;
       });
       fileList.splice(index, 1);
+      this.addBannerForm.img = ''
+      this.$refs.form.validateField("img");
       this.hideUpload = this.$refs.upload.uploadFiles >= this.limitCount;
     },
 
@@ -205,16 +210,25 @@ export default {
 
     handleSelectionChange() {},
 
-    async addOrUpdateBanner() {
-      this.isShowDialog = false;
-      this.addBannerForm.url = this.imgUrl;
-      await addUpdateBanner(this.addBannerForm);
-      this.$message({
-        message: `${this.isUpdate ? "修改" : "添加"}成功!`,
-        type: "success"
+    /**
+     * 点击确定按钮：添加/修改轮播图
+     */
+    addOrUpdateBanner() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          this.isShowDialog = false;
+          this.addBannerForm.url = this.imgUrl;
+          await addUpdateBanner(this.addBannerForm);
+          this.$message({
+            message: `${this.isUpdate ? "修改" : "添加"}成功!`,
+            type: "success"
+          });
+          this.clearFormData();
+          this.getBanners();
+        } else {
+          return false;
+        }
       });
-      this.clearFormData();
-      this.getBanners();
     },
 
     /**
@@ -234,6 +248,7 @@ export default {
       this.addBannerForm.index = banner.index;
       this.addBannerForm._id = banner._id;
       this.imgUrl = banner.url;
+      this.addBannerForm.img = "img";
     },
 
     /**
@@ -242,7 +257,11 @@ export default {
     openAddBannerDialog() {
       this.isUpdate = false;
       this.isShowDialog = true;
-      this.addBannerForm = {};
+      this.addBannerForm = {
+        title: "",
+        index: 1,
+        img: ""
+      };
     },
     /**
      * 关闭对话框
@@ -255,7 +274,7 @@ export default {
      * 在关闭对话框之前执行的函数
      */
     beforeCloseDialog(done) {
-      this.$refs.ruleForm.resetFields();
+      this.$refs.form.resetFields();
       this.clearFormData();
       done();
     },
@@ -271,8 +290,7 @@ export default {
         type: "warning"
       })
         .then(async () => {
-          const result = await delBanner(banner._id);
-          console.log(result);
+          await delBanner(banner._id);
           this.getBanners();
           this.$message({
             type: "success",
@@ -300,10 +318,14 @@ export default {
      * 清空表单数据函数
      */
     clearFormData() {
-      this.$refs.ruleForm.resetFields();
+      this.$refs.form.resetFields();
       this.$refs.upload.clearFiles();
       this.showFiles = [];
-      this.addBannerForm = {};
+      this.addBannerForm = {
+        title: "",
+        index: 1,
+        img: ""
+      };
     }
   }
 };

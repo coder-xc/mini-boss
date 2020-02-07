@@ -5,6 +5,9 @@
       <el-container>
         <Aside :currentPath="currentPath" />
         <el-main>
+          <div v-if="currentPath === '/home'" class="welcome">
+            <h3>欢迎来到购物街后台管理系统</h3>
+          </div>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -12,70 +15,82 @@
   </div>
 </template>
 
-
-
 <script>
-  import Header from "../../components/Header/Header.vue";
-  import Aside from "../../components/Aside/Aside.vue";
-  export default {
-    components: {
-      Header,
-      Aside
-    },
-    data() {
-      return {
-        currentPath: this.$route.path,
-      };
-    },
+import Header from "../../components/Header/Header.vue";
+import Aside from "../../components/Aside/Aside.vue";
+import store from '../../vuex/store'
+export default {
+  components: {
+    Header,
+    Aside
+  },
+  data() {
+    return {
+      // currentPath: this.$router.currentRoute.path
+    };
+  },
+  computed: {
+    currentPath() {
+      return this.$route.path;
+    }
   }
+};
 </script>
 
 
 
 
 <style lang="scss" scoped>
-  .home, .home-container {
-    height: 100%;
-  }
-  .el-header {
-    background-color: #373d41;
+.home,
+.home-container {
+  height: 100%;
+}
+.el-header {
+  background-color: #373d41;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0;
+  align-items: center;
+  color: #fff;
+  font-size: 20px;
+  > div {
     display: flex;
-    justify-content: space-between;
-    padding-left: 0;
     align-items: center;
-    color: #fff;
-    font-size: 20px;
-    > div {
-      display: flex;
-      align-items: center;
-      span {
-        margin-left: 15px;
-      }
+    span {
+      margin-left: 15px;
     }
   }
+}
 
-  .el-aside {
-    background-color: #333744;
-    .el-menu {
-      border-right: none;
-    }
+.el-aside {
+  background-color: #333744;
+  .el-menu {
+    border-right: none;
   }
+}
 
-  .el-main {
-    background-color: #eaedf1;
-  }
+.el-main {
+  background-color: #eaedf1;
+}
+.welcome {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+}
 
-  .iconfont {
-    margin-right: 10px;
-  }
+.iconfont {
+  margin-right: 10px;
+}
 
-  .toggle-button {
-    background-color: #4a5064;
-    font-size: 10px;
-    line-height: 24px;
-    color: #fff;
-    text-align: center;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-  }
+.toggle-button {
+  background-color: #4a5064;
+  font-size: 10px;
+  line-height: 24px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+}
 </style>
