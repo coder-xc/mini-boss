@@ -8,7 +8,7 @@ import store from '../vuex/store'
 let v = new Vue()
 const baseURL = ''
 const instance = axios.create({
-  timeout: 10000, // 设置请求超时时间
+  // timeout: 10000, // 设置请求超时时间
   baseURL: baseURL + '/api'
 })
 

@@ -85,6 +85,7 @@
             :limit="1"
             :file-list="showFiles"
             :on-exceed="handleExceed"
+            :on-remove="handleRemove"
           >
             <i slot="default" class="el-icon-plus"></i>
             <div slot="file" slot-scope="{file}">
@@ -132,7 +133,7 @@ export default {
       addBannerForm: {
         title: "",
         index: 1,
-        img: "123"
+        img: ""
       },
       addBannerRules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
@@ -182,7 +183,7 @@ export default {
       this.hideUpload = fileList.length >= this.limitCount;
       const files = file.raw;
       const result = await uploadImg(files);
-      this.addBannerForm.img = 'imgurl'
+      this.addBannerForm.img = "imgurl";
       this.$refs.form.validateField("img");
       this.imgUrl = result.url;
       this.dialogImageUrl = result.url;
@@ -192,17 +193,17 @@ export default {
     /**
      * 删除upload组件中的图片
      */
-    handleRemove(file) {
-      // 实现缩略图模板时删除文件
-      let fileList = this.$refs.upload.uploadFiles;
-      let index = fileList.findIndex(fileItem => {
-        return fileItem.uid === file.uid;
-      });
-      fileList.splice(index, 1);
-      this.addBannerForm.img = ''
-      this.$refs.form.validateField("img");
-      this.hideUpload = this.$refs.upload.uploadFiles >= this.limitCount;
-    },
+    // handleRemove(file) {
+    //   // 实现缩略图模板时删除文件
+    //   let fileList = this.$refs.upload.uploadFiles;
+    //   let index = fileList.findIndex(fileItem => {
+    //     return fileItem.uid === file.uid;
+    //   });
+    //   fileList.splice(index, 1);
+    //   this.addBannerForm.img = "";
+    //   this.$refs.form.validateField("img");
+    //   this.hideUpload = this.$refs.upload.uploadFiles >= this.limitCount;
+    // },
 
     handlePictureCardPreview() {
       this.dialogVisible = true;
@@ -326,6 +327,14 @@ export default {
         index: 1,
         img: ""
       };
+    },
+    /**
+     * 移除已上传的图片
+     */
+    handleRemove(file) {
+      const uid = file.uid;
+      const i = this.showFiles.findIndex(file => file.uid === uid);
+      this.showFiles.splice(i, 1);
     }
   }
 };

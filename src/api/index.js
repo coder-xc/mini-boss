@@ -166,3 +166,23 @@ export const deleteCategory = (_id) => ajax({
 export const reqActiveList = () => ajax({
   url: '/action'
 })
+
+/**
+ * 添加/修改活动
+ */
+export const addUpdateActive = ({ title, icon, _id }) => ajax({
+  url: `/action${_id ? `/${_id}` : ''}`,
+  method: `${_id ? 'PUT' : 'POST'}`,
+  data: {
+    title,
+    icon
+  }
+})
+
+/**
+ * 删除活动
+ */
+export const delActive = ({ _id }) => ajax({
+  url: `/action/${_id}`,
+  method: 'DELETE'
+})
