@@ -12,10 +12,11 @@
         :rules="loginFormRules"
         label-width="0px"
         class="login_form"
+        @submit.native.prevent
       >
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
@@ -23,11 +24,12 @@
             v-model="loginForm.password"
             prefix-icon="iconfont icon-3702mima"
             type="password"
+            placeholder="请输入密码"
           ></el-input>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
-          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="primary" @click="login" native-type="submit">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -36,20 +38,20 @@
 </template>
 
 <script>
-import { login, getUserInfo } from "../../api";
+import { login } from "../../api";
 export default {
   data() {
     return {
       // 这是登录表单的数据绑定对象
       loginForm: {
-        username: "admin",
-        password: "admin"
+        username: "",
+        password: ""
       },
       // 这是表单的验证规则对象
       loginFormRules: {
         // 验证用户名是否合法
         username: [
-          { required: true, message: "请输入登录名称", trigger: "blur" },
+          { required: true, message: "请输入用户名", trigger: "blur" },
           { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }
         ],
         // 验证密码是否合法
@@ -76,11 +78,8 @@ export default {
          // 保存token
         // 1. 将登录成功之后的 token，保存到客户端的 sessionStorage 中, 通过vuex来保存
         this.$store.dispatch("saveToken", 'bearer  ' + token);
-
         this.$message.success("登录成功");
-
         // 登录成功后，根据token获取用户信息
-        // const user = await getUserInfo();
         this.$store.dispatch("saveUser")
         // 2. 通过编程式导航跳转到后台主页，路由地址是 /home
         this.$router.push("/home");

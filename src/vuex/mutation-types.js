@@ -7,3 +7,6 @@ export const DELETE_USER = 'delete_user'
 
 
 export const RECEIVE_ACTIVE_LIST = 'receive_active_list';
+export const RECEIVE_GOODS_LIST = 'receive_goods_list'
+
+export const RECEIVE_GOODS = 'receive_goods'

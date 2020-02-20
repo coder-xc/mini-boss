@@ -186,3 +186,10 @@ export const delActive = ({ _id }) => ajax({
   url: `/action/${_id}`,
   method: 'DELETE'
 })
+
+/**
+ * 获取商品
+ */
+export const reqGoods = () => ajax({
+  url: '/commodities',
+})

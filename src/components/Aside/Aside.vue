@@ -44,10 +44,16 @@
           <i class="el-icon-goods"></i>
           <span>商品管理</span>
         </template>
-        <el-menu-item index="/category">
+        <el-menu-item index="/categorylist">
           <template slot="title">
             <!-- <i class="el-icon-picture"></i> -->
             <span>分类列表</span>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/goodslist">
+          <template slot="title">
+            <!-- <i class="el-icon-picture"></i> -->
+            <span>商品列表</span>
           </template>
         </el-menu-item>
       </el-submenu>
@@ -63,7 +69,7 @@
           </template>
         </el-menu-item>
       </el-submenu>
-            <el-submenu index="5">
+      <el-submenu index="5">
         <template slot="title">
           <i class="el-icon-goods"></i>
           <span>活动管理</span>

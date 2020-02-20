@@ -18,7 +18,7 @@
 <script>
 import Header from "../../components/Header/Header.vue";
 import Aside from "../../components/Aside/Aside.vue";
-import store from '../../vuex/store'
+// import store from '../../vuex/store'
 export default {
   components: {
     Header,

@@ -67,7 +67,7 @@
 
     <!-- 添加轮播图对话框区域 -->
     <el-dialog
-      :title="addBannerForm.title ? '修改轮播图' : '添加轮播图'"
+      :title="isUpdate ? '修改轮播图' : '添加轮播图'"
       :visible.sync="isShowDialog"
       :before-close="beforeCloseDialog"
     >
@@ -166,14 +166,13 @@ export default {
     /**
      * pageSize 改变时会触发
      */
-    handleSizeChange(newPageSize) {
-      console.log(newPageSize);
+    handleSizeChange() {
+      
     },
     /**
      * currentPage 改变时会触发
      */
-    handlePageChange(newPage) {
-      console.log(newPage);
+    handlePageChange() {
     },
 
     /**

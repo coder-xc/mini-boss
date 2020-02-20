@@ -7,6 +7,7 @@
       <el-breadcrumb-item>分类列表</el-breadcrumb-item>
     </el-breadcrumb>
 
+
     <!-- 卡片区域 -->
     <el-card>
       <el-row :gutter="20">
@@ -77,11 +78,11 @@
     <el-dialog
       :title="this.isUpdate ? '修改分类' : '添加分类'"
       :visible.sync="isShowDialog"
-      :before-close="dialogClose"
+      @close="dialogClose"
       :lock-scroll="false"
     >
       <el-form ref="form" :model="categoryForm" :rules="categoryFormRules" label-width="80px">
-        <el-form-item label="父级分类" prop>
+        <el-form-item label="父级分类" prop="parent">
           <el-select
             clearable
             @clear="clearSelect"
@@ -159,7 +160,22 @@ export default {
       fileList: [], // 上传图片的列表
       previewPath: "", // 预览的图片地址
       previewVisible: false, // 是否显示预览图片
-      isUpdate: false // 是否编辑
+      isUpdate: false, // 是否编辑
+
+      editableTabsValue: "2",
+      editableTabs: [
+        {
+          title: "Tab 1",
+          name: "1",
+          content: "Tab 1 content"
+        },
+        {
+          title: "Tab 2",
+          name: "2",
+          content: "Tab 2 content"
+        }
+      ],
+      tabIndex: 2
     };
   },
 
@@ -255,11 +271,12 @@ export default {
      * 添加分类
      */
     openAddCategory() {
-      this.isUpdate = false;
-      this.isShowDialog = true;
-      this.$nextTick(() => {
-        this.$refs.form.resetFields();
-      });
+      // this.isUpdate = false;
+      // this.isShowDialog = true;
+      // this.$nextTick(() => {
+      //   this.$refs.form.resetFields();
+      // });
+      this.$router.push({ name: 'addCategory', params: { parentCategoryList: this.parentCategoryList } })
     },
 
     /**
@@ -285,11 +302,10 @@ export default {
     /**
      * 关闭对话框前的事件
      */
-    dialogClose(done) {
+    dialogClose() {
       this.fileList = [];
       this.$refs.form.resetFields();
       this.$refs.form.clearValidate();
-      done();
     },
 
     /**
@@ -321,6 +337,35 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+
+    handleTabsEdit(targetName, action) {
+      if (action === "add") {
+        let newTabName = ++this.tabIndex + "";
+        this.editableTabs.push({
+          title: "New Tab",
+          name: newTabName,
+          content: "New Tab content"
+        });
+        this.editableTabsValue = newTabName;
+      }
+      if (action === "remove") {
+        let tabs = this.editableTabs;
+        let activeName = this.editableTabsValue;
+        if (activeName === targetName) {
+          tabs.forEach((tab, index) => {
+            if (tab.name === targetName) {
+              let nextTab = tabs[index + 1] || tabs[index - 1];
+              if (nextTab) {
+                activeName = nextTab.name;
+              }
+            }
+          });
+        }
+
+        this.editableTabsValue = activeName;
+        this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+      }
     }
   }
 };

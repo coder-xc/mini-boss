@@ -6,16 +6,19 @@ import axios from 'axios';
 import router from '../router'
 import store from '../vuex/store'
 let v = new Vue()
-const baseURL = ''
+// const baseURL = ''
+const baseURL = 'http://www.shubuzuo.top'
 const instance = axios.create({
-  // timeout: 10000, // 设置请求超时时间
-  baseURL: baseURL + '/api'
+  timeout: 10000, // 设置请求超时时间
+  // baseURL: baseURL + '/api'
+  baseURL: baseURL
 })
 
 /**
- * 添加请求拦截器, 处理post请求参数(从对象转换为urlencoding)
+ * 添加请求拦截器, 处理请求参数问题以及token问题
  */
 instance.interceptors.request.use((config) => {
+  // 处理请求参数
   if (config.data && (config.data instanceof FormData) === false) {
     config.data = JSON.parse(JSON.stringify(config.data))
     for (let item in config.data) {
@@ -25,6 +28,7 @@ instance.interceptors.request.use((config) => {
     }
   }
   
+  // 处理token
   const token = store.state.adminUser.token
   if(token) {
     config.headers['Authorization'] = token
