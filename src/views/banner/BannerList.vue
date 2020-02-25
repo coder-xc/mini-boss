@@ -34,7 +34,7 @@
             <img :src="slotProps.row.url" alt style="width:50px;height:50px" />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作">
+        <el-table-column align="center" label="操作" width="200">
           <template v-slot:default="slotProps">
             <el-button
               type="primary"
@@ -137,7 +137,7 @@ export default {
       },
       addBannerRules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-        img: [{ required: true, message: "请添加图片", trigger: "change" }],
+        img: [{ required: true, message: "请添加图片", trigger: "blur" }],
         index: [{ required: true, message: "请选择权重", trigger: "blur" }]
       },
       dialogImageUrl: "",

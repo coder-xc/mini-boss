@@ -3,7 +3,7 @@
     <div class="login_box">
       <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="../../assets/logo.jpg" alt />
+        <img src="../../assets/logo.png" alt />
       </div>
       <!-- 登录表单区域 -->
       <el-form
@@ -22,7 +22,7 @@
         <el-form-item prop="password">
           <el-input
             v-model="loginForm.password"
-            prefix-icon="iconfont icon-3702mima"
+            prefix-icon="iconfont icon-mima"
             type="password"
             placeholder="请输入密码"
           ></el-input>

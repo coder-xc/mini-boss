@@ -61,7 +61,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { reqGoods } from "../../api";
+// import { reqGoods } from "../../api";
 export default {
   data() {
     return {};
@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     goDetail(goods) {
-      console.log(goods)
+      // console.log(goods)
       this.$store.dispatch('saveGoods', goods)
       // this.$router.push({ name: "detail", params: { goods } });
       this.$router.replace('/goodslist/detail')

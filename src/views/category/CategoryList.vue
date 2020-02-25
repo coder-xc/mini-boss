@@ -7,7 +7,6 @@
       <el-breadcrumb-item>分类列表</el-breadcrumb-item>
     </el-breadcrumb>
 
-
     <!-- 卡片区域 -->
     <el-card>
       <el-row :gutter="20">
@@ -34,7 +33,7 @@
             <span>{{slotProps.row.parent ? '二级分类' : '一级分类'}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="上级分类"></el-table-column>
+        <el-table-column align="center" label="上级分类" prop="parent.name"></el-table-column>
         <el-table-column align="center" prop="url" label="分类图标">
           <template v-slot:default="slotProps">
             <img
@@ -51,7 +50,7 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="openUpdateCategory(slotProps.row)"
+              @click="editCategory(slotProps.row)"
             >编辑</el-button>
             <el-button
               type="danger"
@@ -276,28 +275,37 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.form.resetFields();
       // });
-      this.$router.push({ name: 'addCategory', params: { parentCategoryList: this.parentCategoryList } })
+      this.$router.push({
+        name: "addCategory",
+        params: { type: "add", parentCategoryList: this.parentCategoryList }
+      });
     },
 
     /**
      * 编辑分类
      */
-    openUpdateCategory(category) {
-      this.isUpdate = true;
-      this.isShowDialog = true;
-      this.$nextTick(() => {
-        this.categoryForm.parent = category.parent ? category.parent : "";
-        this.categoryForm.categoryName = category.name;
-        this.categoryForm._id = category._id;
-        if (category.url) {
-          const tempObj = {
-            name: category.name,
-            url: category.url
-          };
-          this.fileList.push(tempObj);
-        }
+    editCategory(category) {
+      this.$router.push({
+        name: "addCategory",
+        params: { type: "edit", category: category, parentCategoryList: this.parentCategoryList }
       });
     },
+    // openUpdateCategory(category) {
+    //   this.isUpdate = true;
+    //   this.isShowDialog = true;
+    //   this.$nextTick(() => {
+    //     this.categoryForm.parent = category.parent ? category.parent : "";
+    //     this.categoryForm.categoryName = category.name;
+    //     this.categoryForm._id = category._id;
+    //     if (category.url) {
+    //       const tempObj = {
+    //         name: category.name,
+    //         url: category.url
+    //       };
+    //       this.fileList.push(tempObj);
+    //     }
+    //   });
+    // },
 
     /**
      * 关闭对话框前的事件
@@ -337,35 +345,6 @@ export default {
             message: "已取消删除"
           });
         });
-    },
-
-    handleTabsEdit(targetName, action) {
-      if (action === "add") {
-        let newTabName = ++this.tabIndex + "";
-        this.editableTabs.push({
-          title: "New Tab",
-          name: newTabName,
-          content: "New Tab content"
-        });
-        this.editableTabsValue = newTabName;
-      }
-      if (action === "remove") {
-        let tabs = this.editableTabs;
-        let activeName = this.editableTabsValue;
-        if (activeName === targetName) {
-          tabs.forEach((tab, index) => {
-            if (tab.name === targetName) {
-              let nextTab = tabs[index + 1] || tabs[index - 1];
-              if (nextTab) {
-                activeName = nextTab.name;
-              }
-            }
-          });
-        }
-
-        this.editableTabsValue = activeName;
-        this.editableTabs = tabs.filter(tab => tab.name !== targetName);
-      }
     }
   }
 };

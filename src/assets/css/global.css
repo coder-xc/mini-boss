@@ -10,3 +10,8 @@
 .el-table {
   font-size: 12px;
 }
+
+#app,body,html {
+  color: rgba(0, 0, 0, 0.65);
+}
+

@@ -13,6 +13,9 @@ import user from './modules/user';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  state: {
+    isCollapseMenu: false
+  },
   mutations,
   actions,
   getters,

@@ -1,4 +1,7 @@
+import Vue from 'vue'
 import ajax from './ajax'
+import jsonp from 'jsonp'
+let v = new Vue()
 
 /**
  * 登录接口
@@ -70,6 +73,24 @@ export const delUser = ({ _id }) => ajax({
   }
 })
 
+// 发送 jsonp 请求得到天气信息
+export const reqWeather = (city) => {
+  return new Promise((resolve) => {
+    // 执行器函数：内部去执行异步任务，
+    // 成功了调用 resolve(), 失败了不调用 reject()，直接提示错误
+    const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+
+    jsonp(url, {}, (err, data) => {
+      if (!err && data.error === 0) { // 成功的
+        const { dayPictureUrl, weather } = data.results[0].weather_data[0]
+        resolve({ dayPictureUrl, weather })
+      } else { // 失败
+        v.$message.error('获取天气信息失败')
+      }
+    })
+  })
+}
+
 /**
  * 获取轮播图
  */
@@ -136,13 +157,14 @@ export const reqCategories = () => ajax({
 /**
  * 添加或修改分类
  */
-export const reqAddUpdateCategory = ({ parent = '', categoryName: name, url = '', _id }) => ajax({
+export const reqAddUpdateCategory = ({ parent = '', categoryName: name, url = '', attributes, _id }) => ajax({
   url: `/categories${_id ? `/${_id}` : ''}`,
   method: `${_id ? 'PUT' : 'POST'}`,
   data: {
     parent,
     name,
-    url
+    url,
+    attributes
   },
   headers: {
     checkToken: true
@@ -192,4 +214,34 @@ export const delActive = ({ _id }) => ajax({
  */
 export const reqGoods = () => ajax({
   url: '/commodities',
+})
+
+
+/**
+ * 获取商品服务
+ */
+export const reqGoodsServices = () => ajax('/services')
+
+/**
+ * 添加/修改商品服务
+ */
+export const reqAddUpdateGoodsService = ({ name, message, icon, _id }) => ajax({
+  url: `/services${_id ? `/${_id}` : ''}`,
+  method: `${_id ? 'PUT' : 'POST'}`,
+  data: {
+    name,
+    message,
+    icon
+  },
+  headers: {
+    checkToken: true
+  }
+})
+
+/**
+ * 删除商品服务
+ */
+export const reqDelGoodsService = ({ _id }) => ajax({
+  url: `/services/${_id}`,
+  method: 'DELETE'
 })

@@ -1,12 +1,13 @@
 <template>
   <div class="home">
-    <el-container direction="vertical" class="home-container">
-      <Header />
-      <el-container>
-        <Aside :currentPath="currentPath" />
+    <el-container class="home-container">
+      <Aside />
+      <el-container class="inner-container" direction="vertical">
+         <Header />
         <el-main>
+         
           <div v-if="currentPath === '/home'" class="welcome">
-            <h3>欢迎来到购物街后台管理系统</h3>
+            <h3>欢迎来到小程序商城后台管理系统</h3>
           </div>
           <router-view></router-view>
         </el-main>
@@ -45,33 +46,37 @@ export default {
 .home-container {
   height: 100%;
 }
-.el-header {
-  background-color: #373d41;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 0;
-  align-items: center;
-  color: #fff;
-  font-size: 20px;
-  > div {
-    display: flex;
-    align-items: center;
-    span {
-      margin-left: 15px;
-    }
-  }
-}
 
-.el-aside {
-  background-color: #333744;
-  .el-menu {
-    border-right: none;
-  }
+.inner-container{
+  height: 100%;
 }
+// .el-header {
+//   background-color: #373d41;
+//   display: flex;
+//   justify-content: space-between;
+//   padding-left: 0;
+//   align-items: center;
+//   color: #fff;
+//   font-size: 20px;
+//   > div {
+//     display: flex;
+//     align-items: center;
+//     span {
+//       margin-left: 15px;
+//     }
+//   }
+// }
 
-.el-main {
-  background-color: #eaedf1;
-}
+// .el-aside {
+//   background-color: #333744;
+//   .el-menu {
+//     border-right: none;
+//   }
+// }
+
+// .el-main {
+//   background-color: #eaedf1;
+// }
 .welcome {
   display: flex;
   height: 100%;
@@ -80,17 +85,17 @@ export default {
   font-size: 40px;
 }
 
-.iconfont {
-  margin-right: 10px;
-}
+// .iconfont {
+//   margin-right: 10px;
+// }
 
-.toggle-button {
-  background-color: #4a5064;
-  font-size: 10px;
-  line-height: 24px;
-  color: #fff;
-  text-align: center;
-  letter-spacing: 0.2em;
-  cursor: pointer;
-}
+// .toggle-button {
+//   background-color: #4a5064;
+//   font-size: 10px;
+//   line-height: 24px;
+//   color: #fff;
+//   text-align: center;
+//   letter-spacing: 0.2em;
+//   cursor: pointer;
+// }
 </style>

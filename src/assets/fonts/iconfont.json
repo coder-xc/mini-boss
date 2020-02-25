@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1567679",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e6b2",
+      "unicode_decimal": 59058
+    },
+    {
+      "icon_id": "7155561",
+      "name": "密码",
+      "font_class": "mima",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "11903650",
+      "name": "toggle-left",
+      "font_class": "toggle-left",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "11903653",
+      "name": "toggle-right",
+      "font_class": "toggle-right",
+      "unicode": "e6f6",
+      "unicode_decimal": 59126
+    }
+  ]
+}

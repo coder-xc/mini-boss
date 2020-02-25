@@ -1,15 +1,57 @@
 <template>
-  <el-header>
-    <div>
-      <img style="width:60px;height:60px" src="../../assets/logo.jpg" alt />
-      <span>购物街后台管理系统</span>
+  <el-header style="height:64px;">
+    <div class="time-weather-toggle">
+      <div class="toggle" @click="$store.dispatch('toggleCollapse')">
+        <span class="iconfont" :class="isCollapse ? 'icon-toggle-right' : 'icon-toggle-left'"></span>
+      </div>
+      <span>{{currentTime}}</span>
+      <img :src="dayPictureUrl" alt="weather" />
+      <span>{{weather}}</span>
     </div>
-    <el-button type="info" @click="logout">退出</el-button>
+    <div class="user">
+      <div class="userinfo">
+        <el-dropdown @command="handleCommand">
+          <i class="el-icon-setting"></i>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="logout" @click="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <span>欢迎你，{{user.username}}</span>
+      </div>
+    </div>
   </el-header>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { fromateDate } from "../../utils/dateUtils";
+import { reqWeather } from "../../api";
 export default {
+  computed: {
+    ...mapState({
+      user: state => state.adminUser.adminUser,
+      isCollapse: state => state.isCollapseMenu
+    })
+  },
+  data() {
+    return {
+      currentTime: fromateDate(Date.now()),
+      dayPictureUrl: "",
+      weather: ""
+    };
+  },
+
+  created() {
+    this.getWeather();
+    // 启动 循环定时器
+    this.intervalId = setInterval(() => {
+      // 将 currentTime 更新为当前时间值
+      this.currentTime = fromateDate(Date.now());
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
   methods: {
     logout() {
       this.$confirm("确定退出登录吗?", "退出登录", {
@@ -18,8 +60,8 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$store.dispatch('logout')
-          this.$router.replace('/login')
+          this.$store.dispatch("logout");
+          this.$router.replace("/login");
         })
         .catch(() => {
           this.$message({
@@ -27,6 +69,26 @@ export default {
             message: "已取消退出"
           });
         });
+    },
+    handleCommand(command) {
+      if (command === "logout") {
+        this.logout();
+      }
+    },
+    /**
+     * 获取天气信息显示
+     */
+    async getWeather() {
+      const BMap = window.BMap;
+      if(!BMap) return
+      const myCity = new BMap.LocalCity();
+      // 获取城市名称
+      myCity.get(async result => {
+        // console.log(result.name) // 城市名称
+        const { dayPictureUrl, weather } = await reqWeather(result.name);
+        this.dayPictureUrl = dayPictureUrl;
+        this.weather = weather;
+      });
     }
   }
 };
@@ -34,18 +96,59 @@ export default {
 
 <style lang="scss" scoped>
 .el-header {
-  background-color: #373d41;
   display: flex;
   justify-content: space-between;
   padding-left: 0;
   align-items: center;
-  color: #fff;
+  color: rgba(0, 0, 0, 0.65);
   font-size: 20px;
-  > div {
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+
+  .time-weather-toggle {
     display: flex;
     align-items: center;
-    span {
-      margin-left: 15px;
+    font-size: 14px;
+    padding: 0 20px;
+    img {
+      margin: 0 10px;
+      width: 30px;
+      height: 20px;
+    }
+    .toggle{
+      cursor: pointer;
+      margin-right: 10px;
+      .icon-toggle-left, .icon-toggle-right {
+        font-size: 22px;
+      }
+      
+    }
+  }
+}
+.header {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  > span {
+    margin-left: 15px;
+  }
+  img {
+    width: 50px;
+    height: 50px;
+  }
+}
+.user {
+  .userinfo {
+    display: flex;
+    .el-dropdown {
+      text-align: right;
+      .el-icon-setting {
+        cursor: pointer;
+        margin-right: 10px;
+        color: rgba(0, 0, 0, 0.65);
+      }
+    }
+    > span {
+      font-size: 14px;
     }
   }
 }

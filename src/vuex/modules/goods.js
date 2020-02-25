@@ -19,15 +19,15 @@ const state = {
 
 
 const actions = {
-  async getActiveList({ commit, state }) {
+  async getActiveList({ commit }) {
     const result = await reqActiveList()
     commit(RECEIVE_ACTIVE_LIST, result)
   },
-  async getGoods({ commit, state }) {
+  async getGoods({ commit }) {
     const result = await reqGoods()
     commit(RECEIVE_GOODS_LIST, result)
   },
-  saveGoods({commit, state}, goods) {
+  saveGoods({commit}, goods) {
     commit(RECEIVE_GOODS, goods)
   }
 }

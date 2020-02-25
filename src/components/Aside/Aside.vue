@@ -1,32 +1,33 @@
 <template>
-  <el-aside :width="isCollapse ? '64px' : '200px'">
-    <div class="toggle-button" @click="toggleCollapse">|||</div>
+  <el-aside :width="isCollapse ? '80px' : '256px'">
+    <div class="header">
+      <img src="../../assets/logo.png" alt />
+      <h1 v-show="!isCollapse">商城后台管理系统</h1>
+    </div>
     <!-- 侧边栏菜单区域 -->
     <el-menu
-      background-color="#333744"
+      background-color="#001529"
       text-color="#fff"
       active-text-color="#409EFF"
-      unique-opened
       :collapse="isCollapse"
       :collapse-transition="false"
       router
       :default-active="currentPath"
     >
-      <!-- 一级菜单 -->
+      <!-- 二级菜单 -->
       <el-submenu index="1">
-        <!-- 一级菜单的模板区域 -->
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>首页</span>
         </template>
-        <!-- 二级菜单 -->
-        <el-menu-item index="/home">
+        <el-menu-item index="/home" style="background-color:#001529">
           <template slot="title">
             <i class="el-icon-s-home"></i>
             <span>首页</span>
           </template>
         </el-menu-item>
       </el-submenu>
+      <!-- 一级菜单 -->
       <el-submenu index="2">
         <template slot="title">
           <i class="el-icon-picture"></i>
@@ -54,6 +55,12 @@
           <template slot="title">
             <!-- <i class="el-icon-picture"></i> -->
             <span>商品列表</span>
+          </template>
+        </el-menu-item>
+        <el-menu-item index="/goodsservice">
+          <template slot="title">
+            <!-- <i class="el-icon-picture"></i> -->
+            <span>商品服务</span>
           </template>
         </el-menu-item>
       </el-submenu>
@@ -86,20 +93,24 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
-  props: {
-    currentPath: {
-      type: String,
-      value: ""
-    }
-  },
   data() {
     return {
       // 是否折叠
-      isCollapse: false
+      // isCollapse: false
     };
   },
-
+  computed: {
+    ...mapState({
+      isCollapse: state => state.isCollapseMenu
+    }),
+    currentPath() {
+      const { meta, path } = this.$route;
+      if (path.indexOf("/categorylist") !== -1) return meta.activeMenu;
+      return path;
+    }
+  },
   methods: {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
@@ -110,15 +121,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 64px;
+  > h1 {
+    font-size: 20px;
+    color: #fff;
+    margin-left: 15px;
+  }
+  img {
+    width: 32px;
+    height: 32px;
+  }
+}
 .el-aside {
-  background-color: #333744;
+  background-color: #001529;
   .el-menu {
     border-right: none;
   }
 }
 
 .toggle-button {
-  background-color: #4a5064;
+  background-color: #40434d;
   font-size: 10px;
   line-height: 24px;
   color: #fff;
@@ -126,4 +152,17 @@ export default {
   letter-spacing: 0.2em;
   cursor: pointer;
 }
+
+.el-menu-item {
+  background-color: #000c17;
+}
+.el-menu-item.is-active {
+  background-color: #409eff !important;
+  color: #fff !important;
+}
+
+// .el-submenu.is-opened .el-menu-item:hover {
+//   background-color: #409EFF !important;
+//   color: #fff !important;
+// }
 </style>
