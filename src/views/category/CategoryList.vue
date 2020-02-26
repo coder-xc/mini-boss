@@ -1,11 +1,7 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>分类列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-bread />
 
     <!-- 卡片区域 -->
     <el-card>
@@ -130,6 +126,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import {
   reqCategories,
   uploadImg,
@@ -139,9 +136,9 @@ import {
 export default {
   data() {
     return {
-      categoryList: [], // 总分类列表
+      // categoryList: [], // 总分类列表
       parentCategoryList: [], // 一级分类
-      total: 0, // 数据总条数
+      // total: 0, // 数据总条数
       isShowDialog: false, // 是否显示对话框
       categoryForm: {
         // 分类的form表单
@@ -178,6 +175,13 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState({
+      categoryList: state => state.goods.categoryList,
+      total: state => state.goods.categoryTotal
+    })
+  },
+
   created() {
     this.getCategoryList();
   },
@@ -187,8 +191,7 @@ export default {
      * 获取分类列表
      */
     async getCategoryList() {
-      const result = await reqCategories();
-      this.categoryList = result.data;
+      await this.$store.dispatch("getCategory");
       this.categoryList.forEach(category => {
         if (!category.parent) {
           if (
@@ -198,7 +201,6 @@ export default {
           }
         }
       });
-      this.total = result.total;
     },
 
     /**
@@ -287,7 +289,11 @@ export default {
     editCategory(category) {
       this.$router.push({
         name: "addCategory",
-        params: { type: "edit", category: category, parentCategoryList: this.parentCategoryList }
+        params: {
+          type: "edit",
+          category: category,
+          parentCategoryList: this.parentCategoryList
+        }
       });
     },
     // openUpdateCategory(category) {

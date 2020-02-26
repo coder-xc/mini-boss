@@ -216,6 +216,15 @@ export const reqGoods = () => ajax({
   url: '/commodities',
 })
 
+/**
+ * 添加商品
+ */
+export const reqAddGoods = (params) => ajax({
+  url: '/commodities',
+  method: 'POST',
+  data: params
+})
+
 
 /**
  * 获取商品服务

@@ -12,3 +12,7 @@ export const RECEIVE_GOODS_LIST = 'receive_goods_list'
 export const RECEIVE_GOODS = 'receive_goods'
 
 export const TOGGLE_COLLAPSE = 'toggle_collapse'
+
+export const RECEIVE_GOODS_SERVICE = 'receive_goods_service';
+
+export const RECEIVE_CATEGORIES = 'receive_categorise'

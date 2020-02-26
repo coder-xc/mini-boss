@@ -1,12 +1,7 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>商品服务</el-breadcrumb-item>
-    </el-breadcrumb>
-
+    <my-bread />
     <!-- 卡片区域 -->
     <el-card>
       <el-row :gutter="20">
@@ -107,6 +102,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import {
   reqGoodsServices,
   uploadImg,
@@ -116,8 +112,8 @@ import {
 export default {
   data() {
     return {
-      services: [], // 服务列表数据
-      total: 0, // 服务数据总数
+      // services: [], // 服务列表数据
+      // total: 0, // 服务数据总数
       servicesForm: {
         // form表单
         name: "",
@@ -140,17 +136,25 @@ export default {
     };
   },
   created() {
-    this.getServices();
+    // this.$store.dispatch('getGoodsService')
+    // this.getServices();
+  },
+  computed: {
+    ...mapState({
+      services: state => state.goods.goodsService,
+      total: state => state.goods.servicesTotal,
+    })
   },
   methods: {
     /**
      * 获取商品服务数据
      */
-    async getServices() {
-      const result = await reqGoodsServices();
-      this.services = result.data;
-      this.total = result.total;
-    },
+    
+    // async getServices() {
+    //   const result = await reqGoodsServices();
+    //   this.services = result.data;
+    //   this.total = result.total;
+    // },
 
     /**
      * 监听上传图片组件

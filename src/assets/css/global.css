@@ -1,3 +1,7 @@
+#app,body,html {
+  color: rgba(0, 0, 0, 0.65);
+}
+
 .el-card {
   margin-top: 15px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
@@ -11,7 +15,7 @@
   font-size: 12px;
 }
 
-#app,body,html {
-  color: rgba(0, 0, 0, 0.65);
+.ql-editor {
+  min-height: 300px;
 }
 

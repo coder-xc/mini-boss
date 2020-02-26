@@ -22,6 +22,7 @@ const router = new VueRouter({
   routes,
   // base: '/shopadmin/', // 生产环境打包设置
 })
+
 router.beforeEach((to, from, next) => {
   const token = store.state.adminUser.token;
   if (to.path === '/login') {

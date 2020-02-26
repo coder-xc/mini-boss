@@ -33,57 +33,62 @@
           <i class="el-icon-picture"></i>
           <span>轮播图</span>
         </template>
-        <el-menu-item index="/banner">
+        <el-menu-item index="/banner/bannerlist">
           <template slot="title">
             <i class="el-icon-picture"></i>
             <span>首页轮播图</span>
           </template>
         </el-menu-item>
       </el-submenu>
+
       <el-submenu index="3">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
+          <span>分类管理</span>
+        </template>
+        <el-menu-item index="/category/categorylist">
+          <template slot="title">
+            <span>分类列表</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+
+      <el-submenu index="4">
         <template slot="title">
           <i class="el-icon-goods"></i>
           <span>商品管理</span>
         </template>
-        <el-menu-item index="/categorylist">
+        <el-menu-item index="/goods/goodslist">
           <template slot="title">
-            <!-- <i class="el-icon-picture"></i> -->
-            <span>分类列表</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="/goodslist">
-          <template slot="title">
-            <!-- <i class="el-icon-picture"></i> -->
             <span>商品列表</span>
           </template>
         </el-menu-item>
-        <el-menu-item index="/goodsservice">
+        <el-menu-item index="/goods/goodsservice">
           <template slot="title">
-            <!-- <i class="el-icon-picture"></i> -->
             <span>商品服务</span>
           </template>
         </el-menu-item>
       </el-submenu>
-      <el-submenu index="4">
+
+      <el-submenu index="5">
         <template slot="title">
           <i class="el-icon-goods"></i>
           <span>权限管理</span>
         </template>
-        <el-menu-item index="/userlist">
+        <el-menu-item index="/auth/userlist">
           <template slot="title">
-            <!-- <i class="el-icon-picture"></i> -->
             <span>用户管理</span>
           </template>
         </el-menu-item>
       </el-submenu>
-      <el-submenu index="5">
+
+      <el-submenu index="6">
         <template slot="title">
           <i class="el-icon-goods"></i>
           <span>活动管理</span>
         </template>
-        <el-menu-item index="/active">
+        <el-menu-item index="/active/activelist">
           <template slot="title">
-            <!-- <i class="el-icon-picture"></i> -->
             <span>首页活动</span>
           </template>
         </el-menu-item>
@@ -106,9 +111,23 @@ export default {
       isCollapse: state => state.isCollapseMenu
     }),
     currentPath() {
+      // 得到当前请求的路由路径
       const { meta, path } = this.$route;
-      if (path.indexOf("/categorylist") !== -1) return meta.activeMenu;
-      return path;
+      let selectKey = path;
+      if (selectKey.indexOf("/goods") === 0) {
+        // 处理goods路由路径
+        if (selectKey.indexOf("/goods/goodslist") === 0) {
+          selectKey = "/goods/goodslist";
+        } else if (selectKey.indexOf("/goods/goodsservice") === 0) {
+          selectKey = "/goods/goodsservice";
+        } else {
+          selectKey = "/goods/goodslist";
+        }
+      } else if (selectKey.indexOf("/category") === 0) {
+        // 处理category路由路径
+        selectKey = "/category/categorylist";
+      }
+      return selectKey;
     }
   },
   methods: {

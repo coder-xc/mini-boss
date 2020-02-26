@@ -1,12 +1,7 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>商品列表</el-breadcrumb-item>
-    </el-breadcrumb>
-
+    <my-bread />
     <!-- 卡片区域 -->
     <el-card>
       <el-row :gutter="20">
@@ -19,7 +14,7 @@
           <el-button type="primary">查询</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary">添加活动</el-button>
+          <el-button type="primary" @click="$router.push('/goods/addupdategoods')">添加商品</el-button>
         </el-col>
       </el-row>
 
@@ -32,7 +27,7 @@
         <el-table-column align="center" prop="prices.initPrice" label="原价" width="70"></el-table-column>
         <el-table-column align="center" prop="prices.nowPrice" label="现价" width="70"></el-table-column>
         <el-table-column align="center" prop="prices.hotPrice" label="热门价格" width="70"></el-table-column>
-        <el-table-column align="center" label="操作">
+        <el-table-column align="center" label="操作" width="300">
           <template v-slot:default="slotProps">
             <el-button
               type="warning"
@@ -78,9 +73,9 @@ export default {
   methods: {
     goDetail(goods) {
       // console.log(goods)
-      this.$store.dispatch('saveGoods', goods)
+      this.$store.dispatch("saveGoods", goods);
       // this.$router.push({ name: "detail", params: { goods } });
-      this.$router.replace('/goodslist/detail')
+      this.$router.replace("/goods/detail");
     }
   }
 };

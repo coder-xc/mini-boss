@@ -1,11 +1,7 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>轮播图</el-breadcrumb-item>
-      <el-breadcrumb-item>首页轮播图</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-bread />
 
     <!-- 卡片区域 -->
     <el-card>
@@ -166,14 +162,11 @@ export default {
     /**
      * pageSize 改变时会触发
      */
-    handleSizeChange() {
-      
-    },
+    handleSizeChange() {},
     /**
      * currentPage 改变时会触发
      */
-    handlePageChange() {
-    },
+    handlePageChange() {},
 
     /**
      * 监听upload组件图片改变

@@ -24,6 +24,7 @@ export default {
     ...mapState({
       token: state => state.adminUser.token
     })
-  }
+  },
+  
 };
 </script>

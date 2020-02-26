@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
+    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>活动管理</el-breadcrumb-item>
       <el-breadcrumb-item>首页活动</el-breadcrumb-item>
-    </el-breadcrumb>
-
+    </el-breadcrumb> -->
+    <my-bread />
     <!-- 卡片区域 -->
     <el-card>
       <el-row :gutter="20">

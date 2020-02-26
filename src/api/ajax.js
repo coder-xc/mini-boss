@@ -27,13 +27,13 @@ instance.interceptors.request.use((config) => {
       }
     }
   }
-  
+
   // 处理token
   const token = store.state.adminUser.token
-  if(token) {
+  if (token) {
     config.headers['Authorization'] = token
   } else {
-    if(config.headers.checkToken) {
+    if (config.headers.checkToken) {
       throw new Error('授权失败，请重新登录')
     }
   }
@@ -48,22 +48,22 @@ instance.interceptors.response.use(
   response => response.data,
   error => {
     // 1. 没有token直接发请求的错误
-    if(!error.response) {
-      if(router.currentRoute.path !== '/login') {
+    if (!error.response) {
+      if (router.currentRoute.path !== '/login') {
         v.$message.error(error.message)
         router.replace('/login')
       }
     } else {
       // 2. 发了请求, 但token失效了
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         store.dispatch('logout')
-        if(router.currentRoute.path !== '/login') {
+        if (router.currentRoute.path !== '/login') {
           v.$message.error('授权失败，请重新登录!')
           router.replace('/login')
         }
-      } else if(error.response.status === 404) {
+      } else if (error.response.status === 404) {
         v.$message.error('您请求的资源不存在!')
-      } else if(error.response.status === 400) {
+      } else if (error.response.status === 400) {
         v.$message.error('用户名或密码错误!')
       } else {
         v.$message.error('请求错误，请检查网络后重试!')

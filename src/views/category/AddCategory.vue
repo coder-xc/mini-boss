@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-page-header @back="$router.replace('/categorylist')" :content="isUpdate ? '修改分类' : '添加分类'"></el-page-header>
+    <el-page-header @back="$router.replace('/category/categorylist')" :content="isUpdate ? '修改分类' : '添加分类'"></el-page-header>
     <el-form
       ref="form"
       style="margin-top: 2rem;"
       :model="categoryForm"
       :rules="categoryFormRules"
-      label-width="80px"
+      label-width="100px"
       @submit.native.prevent="save"
     >
       <el-tabs type="border-card">
@@ -202,7 +202,6 @@ export default {
     this.parentCategoryList = this.$route.params.parentCategoryList;
     if (type === "edit") {
       this.isUpdate = true;
-      // debugger
       const {
         attributes,
         name: categoryName,
@@ -305,7 +304,7 @@ export default {
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
             type: "success"
           });
-          this.$router.replace("/categorylist");
+          this.$router.replace("/category/categorylist");
         }
       });
     }
