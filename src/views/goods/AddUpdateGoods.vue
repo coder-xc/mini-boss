@@ -43,7 +43,7 @@
           <el-form-item label="原价" prop="prices.initPrice">
             <el-input type="number" v-model="goodsForm.prices.initPrice" placeholder="请输入商品原价"></el-input>
           </el-form-item>
-          <el-form-item label="商品服务" prop="category">
+          <el-form-item label="商品服务" prop="service">
             <el-checkbox-group v-model="goodsForm.services" placeholder="请选择商品服务">
               <el-checkbox
                 v-for="item in services"
@@ -154,8 +154,7 @@
                           style="margin-right:10px;"
                         ></el-input>
                         <el-button
-                          class="el-icon-delete"
-                          type="danger"
+                          type="text"
                           @click="goodsForm.attributes[index].message.splice(_index, 1)"
                         >删除</el-button>
                       </el-row>
@@ -185,7 +184,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { uploadImg, reqAddGoods } from "../../api";
+import { uploadImg, reqAddUpdateGoods } from "../../api";
 export default {
   data() {
     return {
@@ -222,7 +221,8 @@ export default {
           initPrice: [
             { required: true, message: "请输入商品原价", trigger: "blur" }
           ]
-        }
+        },
+        service: { required: true, message: "请选择商品服务", trigger: "blur" }
       },
       fileList: [],
       content: "",
@@ -238,14 +238,52 @@ export default {
   computed: {
     ...mapState({
       categoryList: state => state.goods.categoryList,
-      services: state => state.goods.goodsService
+      services: state => state.goods.goodsService,
+      currentGoods: state => state.goods.currentGoods
     })
   },
 
   created() {
     this.getCategories();
-  },
+    const { type } = this.$route.params;
+    if (type === "add") {
+      this.isUpdate = false;
+    } else if (type === "update") {
+      this.isUpdate = true;
+      
+      const {
+        attributes,
+        category,
+        description,
+        images,
+        prices,
+        services,
+        title,
+        _id
+      } = this.currentGoods;
+      const { hotPrice, initPrice, nowPrice } = prices;
+      this.goodsForm._id = _id;
+      this.goodsForm.title = title;
+      this.goodsForm.description = description;
+      this.goodsForm.attributes = attributes;
+      this.goodsForm.category = category._id;
+      this.goodsForm.images = images;
+      images.forEach(img => {
+        const tempPic = {
+          url: img,
+          name: new Date().getTime()
+        };
+        this.fileList.push(tempPic)
+      });
 
+      this.goodsForm.prices.hotPrice = hotPrice;
+      this.goodsForm.prices.initPrice = initPrice;
+      this.goodsForm.prices.nowPrice = nowPrice;
+      services.forEach(service => {
+        this.goodsForm.services.push(service._id);
+      });
+    }
+  },
   methods: {
     /**
      * 序列化 demoItem
@@ -257,9 +295,9 @@ export default {
     /**
      * 获取分类列表
      */
-    async getCategories() {
+    getCategories() {
       if (this.categoryList.length === 0) {
-        await this.$store.dispatch("getCategory");
+        this.$store.dispatch("getCategory");
       }
       this.categoryList.forEach(category => {
         category.attributes.forEach(attribute => {
@@ -357,7 +395,6 @@ export default {
     },
 
     selectChange(index) {
-      debugger;
       if (this.goodsForm.attributes[index].messageType === "array") {
         this.goodsForm.attributes[index].message = [];
       } else {
@@ -366,12 +403,12 @@ export default {
     },
 
     async save() {
-      await reqAddGoods(this.goodsForm);
+      await reqAddUpdateGoods(this.goodsForm);
       this.$message({
-        message: '添加商品成功！',
+        message: `${this.isUpdate ? '修改' : '添加'}商品成功！`,
         type: "success"
       });
-      this.$router.replace("/goods/goodslist")
+      this.$router.replace("/goods/goodslist");
     }
   }
 };

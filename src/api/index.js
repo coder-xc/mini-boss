@@ -217,12 +217,23 @@ export const reqGoods = () => ajax({
 })
 
 /**
- * 添加商品
+ * 添加/修改商品
  */
-export const reqAddGoods = (params) => ajax({
-  url: '/commodities',
-  method: 'POST',
-  data: params
+export const reqAddUpdateGoods = (params) => {
+  const { _id } = params;
+  return ajax({
+    url: `/commodities${_id ? `/${_id}` : ''}`,
+    method: `${_id ? 'PUT' : 'POST'}`,
+    data: params
+  })
+}
+
+/**
+ * 删除商品
+ */
+export const reqDelGoods = ({ _id }) => ajax({
+  url: `/commodities/${_id}`,
+  method: 'DELETE'
 })
 
 

@@ -14,7 +14,7 @@
           <el-button type="primary">查询</el-button>
         </el-col>
         <el-col :span="2">
-          <el-button type="primary" @click="$router.push('/goods/addupdategoods')">添加商品</el-button>
+          <el-button type="primary" @click="addGoods">添加商品</el-button>
         </el-col>
       </el-row>
 
@@ -35,8 +35,18 @@
               size="mini"
               @click="goDetail(slotProps.row)"
             >详情</el-button>
-            <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="updateGoods(slotProps.row)"
+            >修改</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="delGoods(slotProps.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,7 +66,7 @@
 
 <script>
 import { mapState } from "vuex";
-// import { reqGoods } from "../../api";
+import { reqDelGoods } from "../../api";
 export default {
   data() {
     return {};
@@ -72,10 +82,36 @@ export default {
   },
   methods: {
     goDetail(goods) {
-      // console.log(goods)
       this.$store.dispatch("saveGoods", goods);
-      // this.$router.push({ name: "detail", params: { goods } });
       this.$router.replace("/goods/detail");
+    },
+    addGoods() {
+      this.$router.push({ name: "addUpdateGoods", params: { type: "add" } });
+    },
+    updateGoods(goods) {
+      this.$store.dispatch("saveGoods", goods);
+      this.$router.push({ name: "addUpdateGoods", params: { type: "update" } });
+    },
+    async delGoods(goods) {
+      this.$confirm("确定删除该商品吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          await reqDelGoods(goods);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.$store.dispatch("getGoods");
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   }
 };

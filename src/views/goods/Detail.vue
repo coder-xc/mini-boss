@@ -30,7 +30,7 @@
             </el-form-item>
             <el-form-item label="商品属性：">
               <el-card>
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse v-model="activeNames">
                   <el-collapse-item
                     v-for="(item, index) in currentGoods.attributes"
                     :key="index"
@@ -126,9 +126,6 @@ export default {
     goBack() {
       this.$router.replace("/goods/goodslist");
     },
-    handleChange(val) {
-      console.log(val);
-    }
   }
 };
 </script>

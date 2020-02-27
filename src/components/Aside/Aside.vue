@@ -112,7 +112,7 @@ export default {
     }),
     currentPath() {
       // 得到当前请求的路由路径
-      const { meta, path } = this.$route;
+      const { path } = this.$route;
       let selectKey = path;
       if (selectKey.indexOf("/goods") === 0) {
         // 处理goods路由路径

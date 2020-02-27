@@ -104,7 +104,6 @@
 <script>
 import { mapState } from 'vuex'
 import {
-  reqGoodsServices,
   uploadImg,
   reqAddUpdateGoodsService,
   reqDelGoodsService
@@ -274,7 +273,7 @@ export default {
     confirmAddService() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const result = await reqAddUpdateGoodsService(this.servicesForm);
+          await reqAddUpdateGoodsService(this.servicesForm);
           this.isShowDialog = false;
           this.$message({
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,

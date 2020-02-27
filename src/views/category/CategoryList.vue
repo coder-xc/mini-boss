@@ -128,7 +128,6 @@
 <script>
 import { mapState } from "vuex";
 import {
-  reqCategories,
   uploadImg,
   reqAddUpdateCategory,
   deleteCategory
