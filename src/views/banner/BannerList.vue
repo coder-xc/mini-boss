@@ -20,7 +20,7 @@
       </el-row>
 
       <!-- 表格数据渲染区域 -->
-      <el-table :data="bannerList" stripe border @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" element-loading-text="拼命加载中" :data="bannerList" stripe border>
         <el-table-column align="center" type="selection" width="55"></el-table-column>
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="title" label="标题" width="200"></el-table-column>
@@ -54,8 +54,6 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
           background
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
           :page-sizes="[1,2,5,10]"
         ></el-pagination>
       </div>
@@ -65,29 +63,28 @@
     <el-dialog
       :title="isUpdate ? '修改轮播图' : '添加轮播图'"
       :visible.sync="isShowDialog"
-      :before-close="beforeCloseDialog"
+      @close="dialogClose"
     >
       <el-form :model="addBannerForm" :rules="addBannerRules" ref="form" label-width="70px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="addBannerForm.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <el-form-item label="图片" ref="uploadForm" prop="img">
+        <el-form-item label="图片" ref="uploadForm" prop="url">
           <el-upload
             action="#"
             list-type="picture-card"
             :on-change="handleChange"
             :auto-upload="false"
-            ref="upload"
             :limit="1"
-            :file-list="showFiles"
+            :file-list="fileList"
             :on-exceed="handleExceed"
             :on-remove="handleRemove"
           >
             <i slot="default" class="el-icon-plus"></i>
             <div slot="file" slot-scope="{file}">
-              <img class="el-upload-list__item-thumbnail" :src="imgUrl" alt />
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt />
               <span class="el-upload-list__item-actions">
-                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                <span class="el-upload-list__item-preview" @click="handlePreview(file)">
                   <i class="el-icon-zoom-in"></i>
                 </span>
                 <span class="el-upload-list__item-delete" @click="handleRemove(file)">
@@ -105,46 +102,42 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
+        <el-button @click="isShowDialog = false">取 消</el-button>
         <el-button type="primary" @click="addOrUpdateBanner">确 定</el-button>
       </span>
     </el-dialog>
 
     <!-- 图片预览区域 -->
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt />
+    <el-dialog :visible.sync="previewVisible">
+      <img width="100%" :src="previewPath" alt />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { reqBanner, uploadImg, addUpdateBanner, delBanner } from "../../api";
-import { serverURL } from "../../api/serverConfig";
+import { uploadImg } from "api";
+import { reqBanner, addUpdateBanner, delBanner } from "api/banner";
 export default {
   data() {
     return {
+      loading: true,
       bannerList: [],
       total: 0,
       isShowDialog: false,
       addBannerForm: {
         title: "",
         index: 1,
-        img: ""
+        url: ""
       },
       addBannerRules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-        img: [{ required: true, message: "请添加图片", trigger: "blur" }],
+        url: [{ required: true, message: "请添加图片", trigger: "blur" }],
         index: [{ required: true, message: "请选择权重", trigger: "blur" }]
       },
-      dialogImageUrl: "",
-      dialogVisible: false,
-      disabled: false,
-      uploadUrl: serverURL + "/upload",
-      imgUrl: "",
-      limitCount: 1,
-      hideUpload: false,
-      showFiles: [],
-      isUpdate: false
+      fileList: [],
+      isUpdate: false,
+      previewPath: "",
+      previewVisible: false
     };
   },
   created() {
@@ -156,52 +149,48 @@ export default {
      */
     async getBanners() {
       const result = await reqBanner();
+      this.loading = false;
       this.bannerList = result.data;
       this.total = result.total;
     },
-    /**
-     * pageSize 改变时会触发
-     */
-    handleSizeChange() {},
-    /**
-     * currentPage 改变时会触发
-     */
-    handlePageChange() {},
 
     /**
      * 监听upload组件图片改变
      */
-    async handleChange(file, fileList) {
-      this.hideUpload = fileList.length >= this.limitCount;
-      const files = file.raw;
-      const result = await uploadImg(files);
-      this.addBannerForm.img = "imgurl";
+    async handleChange({ raw }) {
+      const file = raw;
+      this.imgLoading = this.$notify({
+        title: "提示",
+        message: "图片上传中...",
+        duration: 0
+      });
+      const result = await uploadImg(file);
+      this.imgLoading.close();
+      if (!result) {
+        return;
+      }
+      this.$notify({
+        title: "成功",
+        message: "图片上传成功！",
+        type: "success",
+        duration: 3000
+      });
+      this.addBannerForm.url = result.url;
       this.$refs.form.validateField("img");
-      this.imgUrl = result.url;
-      this.dialogImageUrl = result.url;
-      return false;
+      const tempObj = {
+        name: result.filename,
+        url: result.url
+      };
+      this.fileList.push(tempObj);
     },
 
     /**
-     * 删除upload组件中的图片
+     * 图片预览
      */
-    // handleRemove(file) {
-    //   // 实现缩略图模板时删除文件
-    //   let fileList = this.$refs.upload.uploadFiles;
-    //   let index = fileList.findIndex(fileItem => {
-    //     return fileItem.uid === file.uid;
-    //   });
-    //   fileList.splice(index, 1);
-    //   this.addBannerForm.img = "";
-    //   this.$refs.form.validateField("img");
-    //   this.hideUpload = this.$refs.upload.uploadFiles >= this.limitCount;
-    // },
-
-    handlePictureCardPreview() {
-      this.dialogVisible = true;
+    handlePreview(file) {
+      this.previewPath = file.url;
+      this.previewVisible = true;
     },
-
-    handleSelectionChange() {},
 
     /**
      * 点击确定按钮：添加/修改轮播图
@@ -210,16 +199,12 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.isShowDialog = false;
-          this.addBannerForm.url = this.imgUrl;
           await addUpdateBanner(this.addBannerForm);
           this.$message({
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
             type: "success"
           });
-          this.clearFormData();
           this.getBanners();
-        } else {
-          return false;
         }
       });
     },
@@ -231,17 +216,17 @@ export default {
     openUpdateBannerDialog(banner) {
       this.isUpdate = true;
       this.isShowDialog = true;
-      let fileArr = [];
-      let fileObj = {};
-      fileObj.name = banner.title;
-      fileObj.url = banner.url;
-      fileArr.push(fileObj);
-      this.showFiles = [...fileArr];
-      this.addBannerForm.title = banner.title;
-      this.addBannerForm.index = banner.index;
-      this.addBannerForm._id = banner._id;
-      this.imgUrl = banner.url;
-      this.addBannerForm.img = "img";
+      const { url, index, title } = banner;
+      this.$nextTick(() => {
+        this.addBannerForm.url = url;
+        this.addBannerForm.index = index;
+        this.addBannerForm.title = title;
+        const tempObj = {
+          name: title,
+          url: url
+        };
+        this.fileList.push(tempObj);
+      });
     },
 
     /**
@@ -250,26 +235,13 @@ export default {
     openAddBannerDialog() {
       this.isUpdate = false;
       this.isShowDialog = true;
-      this.addBannerForm = {
-        title: "",
-        index: 1,
-        img: ""
-      };
     },
     /**
-     * 关闭对话框
+     * 对话框关闭时
      */
-    closeDialog() {
-      this.isShowDialog = false;
-      this.clearFormData();
-    },
-    /**
-     * 在关闭对话框之前执行的函数
-     */
-    beforeCloseDialog(done) {
+    dialogClose() {
+      this.fileList = [];
       this.$refs.form.resetFields();
-      this.clearFormData();
-      done();
     },
 
     /**
@@ -281,63 +253,43 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(async () => {
-          await delBanner(banner._id);
-          this.getBanners();
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+      }).then(async () => {
+        await delBanner(banner._id);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
         });
+        this.getBanners();
+      });
     },
 
     /**
      * 图片超出上传的数量
      */
     handleExceed() {
-      this.$message({
-        message: "只能添加一张图片",
-        type: "error"
-      });
+      this.$message.error("只能添加一张图片");
     },
-    /**
-     * 清空表单数据函数
-     */
-    clearFormData() {
-      this.$refs.form.resetFields();
-      this.$refs.upload.clearFiles();
-      this.showFiles = [];
-      this.addBannerForm = {
-        title: "",
-        index: 1,
-        img: ""
-      };
-    },
+
     /**
      * 移除已上传的图片
      */
     handleRemove(file) {
+      this._axiosPromiseArr.forEach(cancel => {
+        cancel({ msg: "图片已停止上传", code: 600 });
+      });
       const uid = file.uid;
-      const i = this.showFiles.findIndex(file => file.uid === uid);
-      this.showFiles.splice(i, 1);
+      const i = this.fileList.findIndex(file => file.uid === uid);
+      this.fileList.splice(i, 1);
+      this.addBannerForm.url = "";
+      this.$refs.form.validateField("img");
     }
   }
 };
 </script>
 
 
-<style lang="scss">
-.hide .el-upload--picture-card {
-  display: none;
-}
-.el-upload-list__item {
+<style lang="scss" scoped>
+/deep/ .el-upload-list__item {
   transition: none !important;
 }
 </style>

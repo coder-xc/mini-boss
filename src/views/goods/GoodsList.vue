@@ -19,7 +19,7 @@
       </el-row>
 
       <!-- 表格数据渲染区域 -->
-      <el-table :data="goods" stripe border>
+      <el-table v-loading="loading" element-loading-text="拼命加载中" :data="goods" stripe border>
         <el-table-column align="center" type="selection" width="55"></el-table-column>
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="title" label="商品名称"></el-table-column>
@@ -66,10 +66,12 @@
 
 <script>
 import { mapState } from "vuex";
-import { reqDelGoods } from "../../api";
+import { reqDelGoods } from "api/goods";
 export default {
   data() {
-    return {};
+    return {
+      loading: true
+    };
   },
   computed: {
     ...mapState({
@@ -78,7 +80,7 @@ export default {
     })
   },
   created() {
-    this.$store.dispatch("getGoods");
+    this.$store.dispatch("getGoods").then(() => (this.loading = false));
   },
   methods: {
     goDetail(goods) {
@@ -97,21 +99,14 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(async () => {
-          await reqDelGoods(goods);
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-          this.$store.dispatch("getGoods");
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+      }).then(async () => {
+        await reqDelGoods(goods);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
         });
+        this.$store.dispatch("getGoods");
+      });
     }
   }
 };

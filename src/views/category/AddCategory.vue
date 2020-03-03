@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-page-header @back="$router.replace('/category/categorylist')" :content="isUpdate ? '修改分类' : '添加分类'"></el-page-header>
+    <el-page-header
+      @back="$router.replace('/category/categorylist')"
+      :content="isUpdate ? '修改分类' : '添加分类'"
+    ></el-page-header>
     <el-form
       ref="form"
       style="margin-top: 2rem;"
@@ -156,11 +159,11 @@
 </template>
 
 <script>
-import { uploadImg, reqAddUpdateCategory } from "../../api";
+import { uploadImg } from "api";
+import { reqAddUpdateCategory } from "api/category";
 export default {
   data() {
     return {
-      curCategory: {},
       parentCategoryList: [], // 一级分类
       categoryForm: {
         // 分类的form表单
@@ -190,7 +193,6 @@ export default {
         ],
         url: [{ required: true, message: "请添加图片", trigger: "change" }]
       },
-      // seleteId: "", // 选择的一级分类
       fileList: [], // 上传图片的列表
       previewPath: "", // 预览的图片地址
       previewVisible: false, // 是否显示预览图片
@@ -240,6 +242,10 @@ export default {
      * 移除已上传的图片
      */
     handleRemove(file) {
+      this._axiosPromiseArr.forEach(cancel => {
+        cancel({ msg: "图片已停止上传", code: 600 });
+      });
+      this.imgLoading.close();
       const uid = file.uid;
       const i = this.fileList.findIndex(file => file.uid === uid);
       this.fileList.splice(i, 1);
@@ -252,14 +258,16 @@ export default {
      */
     async handleChange(file) {
       const files = file.raw;
-      // this.$message("图片上传中...");
-      const loading = this.$notify({
+      this.imgLoading = this.$notify({
         title: "提示",
         message: "图片上传中...",
         duration: 0
       });
       const result = await uploadImg(files);
-      loading.close();
+      this.imgLoading.close();
+      if (!result) {
+        return;
+      }
       this.$notify({
         title: "成功",
         message: "图片上传成功！",
@@ -288,6 +296,9 @@ export default {
       this.categoryForm.parent = "";
     },
 
+    /**
+     * 监听属性值类型select下拉框的改变
+     */
     selectChange(index) {
       if (this.categoryForm.attributes[index].messageType === "array") {
         this.categoryForm.attributes[index].message = [];
@@ -296,6 +307,9 @@ export default {
       }
     },
 
+    /**
+     * 点击保存按钮: 添加/修改分类
+     */
     async save() {
       this.$refs.form.validate(async valid => {
         if (valid) {

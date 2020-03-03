@@ -3,16 +3,19 @@
  */
 import Vue from 'vue'
 import axios from 'axios';
-import router from '../router'
-import store from '../vuex/store'
+import router from '@/router'
+import store from '@/vuex/store'
+import { serverURL } from '@/utils/serverConfig'
 let v = new Vue()
-// const baseURL = ''
-const baseURL = '';
+
 const instance = axios.create({
   // timeout: 30000, // 设置请求超时时间
   // baseURL: baseURL + '/api'
-  baseURL: baseURL
+  baseURL: serverURL
 })
+
+// 存放axios的cancel对象，用于取消请求
+Vue.prototype._axiosPromiseArr = []
 
 /**
  * 添加请求拦截器, 处理请求参数问题以及token问题
@@ -27,6 +30,13 @@ instance.interceptors.request.use((config) => {
       }
     }
   }
+
+  /**
+   * new一个Cancel对象，并push到Vue.prototype._axiosPromiseArr中
+   */
+  config.cancelToken = new axios.CancelToken(cancel => {
+    Vue.prototype._axiosPromiseArr.push(cancel)
+  })
 
   // 处理token
   const token = store.state.adminUser.token
@@ -49,6 +59,11 @@ instance.interceptors.response.use(
   error => {
     // 1. 没有token直接发请求的错误
     if (!error.response) {
+      // 取消请求特殊处理
+      if (error.message.code === 600) {
+        v.$message.warning(error.message.msg)
+        return;
+      }
       if (router.currentRoute.path !== '/login') {
         v.$message.error(error.message)
         router.replace('/login')
@@ -73,4 +88,4 @@ instance.interceptors.response.use(
   }
 )
 
-export default instance
+export default instance;

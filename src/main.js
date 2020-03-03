@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
-import MyBread from './components/MyBread/MyBread.vue'
+import MyBread from 'components/MyBread/MyBread.vue'
 import router from './router'
 import store from './vuex/store'
 import './plugins/element.js'
-import '../src/assets/css/global.css';
-import '../src/assets/css/reset.css';
-import '../src/assets/fonts/iconfont.css'
+import './assets/css/global.css';
+import './assets/css/reset.css';
+import './assets/fonts/iconfont.css'
+
 
 // 引入富文本编辑器
 import VueQuillEditor from 'vue-quill-editor'

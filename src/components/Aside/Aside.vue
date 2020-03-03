@@ -73,6 +73,18 @@
       <el-submenu index="5">
         <template slot="title">
           <i class="el-icon-goods"></i>
+          <span>商家管理</span>
+        </template>
+        <el-menu-item index="/merchant/merchantlist">
+          <template slot="title">
+            <span>店铺列表</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+
+      <el-submenu index="6">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
           <span>权限管理</span>
         </template>
         <el-menu-item index="/auth/userlist">
@@ -82,7 +94,7 @@
         </el-menu-item>
       </el-submenu>
 
-      <el-submenu index="6">
+      <el-submenu index="7">
         <template slot="title">
           <i class="el-icon-goods"></i>
           <span>活动管理</span>
@@ -90,6 +102,17 @@
         <el-menu-item index="/active/activelist">
           <template slot="title">
             <span>首页活动</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="8">
+        <template slot="title">
+          <i class="el-icon-goods"></i>
+          <span>订单管理</span>
+        </template>
+        <el-menu-item index="/order/orderlist">
+          <template slot="title">
+            <span>订单列表</span>
           </template>
         </el-menu-item>
       </el-submenu>

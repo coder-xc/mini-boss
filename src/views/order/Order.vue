@@ -1,5 +1,5 @@
 <template>
   <div>
-    <my-bread />
+    <router-view />
   </div>
 </template>

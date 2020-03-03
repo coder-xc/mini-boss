@@ -1,11 +1,6 @@
 <template>
   <div>
     <!-- 头部面包屑区域 -->
-    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-      <el-breadcrumb-item>首页活动</el-breadcrumb-item>
-    </el-breadcrumb> -->
     <my-bread />
     <!-- 卡片区域 -->
     <el-card>
@@ -24,7 +19,7 @@
       </el-row>
 
       <!-- 表格数据渲染区域 -->
-      <el-table :data="activeList" stripe border>
+      <el-table v-loading="loading" element-loading-text="拼命加载中" :data="activeList" stripe border>
         <el-table-column align="center" type="selection" width="55"></el-table-column>
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="title" label="活动名称" width="200"></el-table-column>
@@ -102,8 +97,8 @@
 
 <script>
 import { mapState } from "vuex";
-
-import { uploadImg, addUpdateActive, delActive } from "../../api";
+import { uploadImg } from "api";
+import { addUpdateActive, delActive } from "api/activity";
 export default {
   computed: {
     ...mapState({
@@ -113,6 +108,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       activeForm: {
         title: "",
         icon: ""
@@ -130,7 +126,7 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getActiveList");
+    this.$store.dispatch("getActiveList").then(() => (this.loading = false));
   },
   methods: {
     /**
@@ -211,22 +207,15 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(async () => {
-          await delActive(active);
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-          this.$store.dispatch("getActiveList");
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+      }).then(async () => {
+        await delActive(active);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
         });
-    },
+        this.$store.dispatch("getActiveList");
+      });
+    }
   }
 };
 </script>

@@ -6,11 +6,12 @@
 
 <script>
 export default {
-  mounted() {
-    const token = window.sessionStorage.getItem('token');
-    if(!token) {
-      this.$router.replace('/login')
-    }
-  }
+  
+  // mounted() {
+  //   const token = window.sessionStorage.getItem('token');
+  //   if(!token) {
+  //     this.$router.replace('/login')
+  //   }
+  // }
 }
 </script>

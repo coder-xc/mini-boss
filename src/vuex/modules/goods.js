@@ -1,28 +1,30 @@
-import {
-  reqActiveList,
-  reqGoods,
-  reqGoodsServices,
-  reqCategories
-} from '../../api';
+
+import { reqActiveList } from 'api/activity';
+import { reqGoods, reqGoodsServices } from 'api/goods';
+import { reqCategories } from 'api/category';
+import { reqMerchants } from 'api/merchant';
 
 import {
   RECEIVE_ACTIVE_LIST,
   RECEIVE_GOODS_LIST,
   RECEIVE_GOODS,
   RECEIVE_GOODS_SERVICE,
-  RECEIVE_CATEGORIES
+  RECEIVE_CATEGORIES,
+  RECEIVE_MERCHANTS
 } from '../mutation-types';
 
 const state = {
   activeList: [],
   activeTotal: 0,
-  goodsList: [],
+  goodsList: null,
   goodsTotal: 0,
   currentGoods: JSON.parse(sessionStorage.getItem('goods') || '{}'),
   goodsService: [],
   servicesTotal: 0,
   categoryList: [],
   categoryTotal: 0,
+  merchantList: [],
+  merchantTotal: 0,
 };
 
 
@@ -45,6 +47,10 @@ const actions = {
   async getCategory({ commit }) {
     const result = await reqCategories();
     commit(RECEIVE_CATEGORIES, result)
+  },
+  async getMerchants({ commit }) {
+    const result = await reqMerchants();
+    commit(RECEIVE_MERCHANTS, result)
   }
 };
 
@@ -69,6 +75,10 @@ const mutations = {
   [RECEIVE_CATEGORIES](state, { data, total }) {
     state.categoryList = data;
     state.categoryTotal = total;
+  },
+  [RECEIVE_MERCHANTS](state, { data, total }) {
+    state.merchantList = data;
+    state.merchantTotal = total;
   }
 };
 

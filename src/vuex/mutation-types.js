@@ -1,18 +1,12 @@
 export const RECEIVE_TOKEN = 'receive_token';
 export const RECEIVE_ADMIN_USER = 'receive_admin_user';
 export const LOGOUT = 'logout';
-
 export const RECEIVE_USER_LIST = 'receive_user_list';
 export const DELETE_USER = 'delete_user'
-
-
 export const RECEIVE_ACTIVE_LIST = 'receive_active_list';
 export const RECEIVE_GOODS_LIST = 'receive_goods_list'
-
 export const RECEIVE_GOODS = 'receive_goods'
-
 export const TOGGLE_COLLAPSE = 'toggle_collapse'
-
 export const RECEIVE_GOODS_SERVICE = 'receive_goods_service';
-
-export const RECEIVE_CATEGORIES = 'receive_categorise'
+export const RECEIVE_CATEGORIES = 'receive_categorise';
+export const RECEIVE_MERCHANTS = 'receive_merchants';

@@ -8,7 +8,7 @@ import {
 import {
   getAdminUser,
   getUserInfo,
-} from '../../api'
+} from 'api/user'
 
 const state = {
   token: localStorage.getItem('token'), // 登录token标识,
@@ -23,7 +23,7 @@ const actions = {
     localStorage.setItem('token', token)
     commit(RECEIVE_TOKEN, { token })
   },
-  async saveUser({ commit, state }) {
+  async saveUser({ commit }) {
     const user = await getUserInfo();
     commit(RECEIVE_ADMIN_USER, { user })
   },
@@ -31,7 +31,7 @@ const actions = {
     localStorage.removeItem('token')
     commit(LOGOUT)
   },
-  async getUserList({ commit, state }) {
+  async getUserList({ commit }) {
     const userList = await getAdminUser()
     commit(RECEIVE_USER_LIST, { userList })
   },

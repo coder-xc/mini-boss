@@ -20,7 +20,7 @@
       </el-row>
 
       <!-- 表格数据渲染区域 -->
-      <el-table :data="userList" stripe border>
+      <el-table v-loading="loading" element-loading-text="拼命加载中" :data="userList" stripe border>
         <el-table-column align="center" type="selection" width="55"></el-table-column>
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="username" label="用户名" width="200"></el-table-column>
@@ -30,7 +30,7 @@
         <el-table-column align="center" prop="updatedAt" label="更新时间">
           <template v-slot:default="slotProps">{{slotProps.row.updatedAt | fromateDate}}</template>
         </el-table-column>
-        <el-table-column align="center" label="操作">
+        <el-table-column align="center" label="操作" width="200">
           <template v-slot:default="slotProps">
             <el-button
               type="primary"
@@ -81,12 +81,13 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import { fromateDate } from "../../utils/dateUtils";
-import { addUser, updateUser, delUser } from "../../api";
+import { fromateDate } from "@/utils/dateUtils";
+import { addUser, updateUser, delUser } from "api/user";
 
 export default {
   data() {
     return {
+      loading: true,
       addUserForm: {
         username: "",
         password: ""
@@ -112,7 +113,7 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getUserList");
+    this.$store.dispatch("getUserList").then(() => (this.loading = false));
   },
 
   methods: {
@@ -173,28 +174,21 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(async () => {
-          if (user._id === this.user._id) {
-            this.$message({
-              type: "error",
-              message: "不能删除当前登录用户!"
-            });
-            return;
-          }
-          await delUser(user);
+      }).then(async () => {
+        if (user._id === this.user._id) {
           this.$message({
-            type: "success",
-            message: "删除成功!"
+            type: "error",
+            message: "不能删除当前登录用户!"
           });
-          this.$store.dispatch("getUserList");
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+          return;
+        }
+        await delUser(user);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
         });
+        this.$store.dispatch("getUserList");
+      });
     }
   }
 };

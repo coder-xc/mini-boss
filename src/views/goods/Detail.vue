@@ -55,7 +55,7 @@
                             <span v-if="_index !== item.message.length - 1">，</span>
                           </span>
                         </template>
-                        <div v-if="item.messageType !== 'array'">{{item.value}}</div>
+                        <div v-if="item.messageType !== 'array'">{{item.message}}</div>
                       </el-form-item>
                     </el-form>
                   </el-collapse-item>

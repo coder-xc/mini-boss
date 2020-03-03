@@ -58,7 +58,7 @@
       </div>
     </el-card>
 
-    <!-- 添加/修改分类对话框 -->
+    <!-- 添加/修改服务对话框 -->
     <el-dialog
       :title="this.isUpdate ? '修改服务' : '添加服务'"
       :visible.sync="isShowDialog"
@@ -102,12 +102,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import {
-  uploadImg,
-  reqAddUpdateGoodsService,
-  reqDelGoodsService
-} from "../../api";
+import { mapState } from "vuex";
+import { uploadImg } from "api";
+import { reqAddUpdateGoodsService, reqDelGoodsService } from "api/goods";
 export default {
   data() {
     return {
@@ -141,32 +138,25 @@ export default {
   computed: {
     ...mapState({
       services: state => state.goods.goodsService,
-      total: state => state.goods.servicesTotal,
+      total: state => state.goods.servicesTotal
     })
   },
   methods: {
-    /**
-     * 获取商品服务数据
-     */
-    
-    // async getServices() {
-    //   const result = await reqGoodsServices();
-    //   this.services = result.data;
-    //   this.total = result.total;
-    // },
-
     /**
      * 监听上传图片组件
      */
     async handleChange({ raw }) {
       const file = raw;
-      const loading = this.$notify({
+      this.imgLoading = this.$notify({
         title: "提示",
         message: "图片上传中...",
         duration: 0
       });
       const result = await uploadImg(file);
-      loading.close();
+      this.imgLoading.close();
+      if (!result) {
+        return;
+      }
       this.$notify({
         title: "成功",
         message: "图片上传成功！",
@@ -189,6 +179,7 @@ export default {
       this.isUpdate = false;
       this.isShowDialog = true;
     },
+
     /**
      * 打开修改服务对话框
      */
@@ -220,6 +211,10 @@ export default {
      * 移除已上传的图片
      */
     handleRemove(file) {
+      this._axiosPromiseArr.forEach(cancel => {
+        cancel({ msg: "图片已停止上传", code: 600 });
+      });
+      this.imgLoading.close();
       const uid = file.uid;
       const i = this.fileList.findIndex(file => file.uid === uid);
       this.fileList.splice(i, 1);
@@ -240,7 +235,6 @@ export default {
      * 对话框关闭时
      */
     dialogClose() {
-      // debugger
       this.fileList = [];
       this.$refs.form.resetFields();
     },
@@ -250,21 +244,14 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(async () => {
-          await reqDelGoodsService(service);
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-          this.getServices();
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+      }).then(async () => {
+        await reqDelGoodsService(service);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
         });
+        this.$store.dispatch("getGoodsService");
+      });
     },
 
     /**
@@ -279,7 +266,7 @@ export default {
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
             type: "success"
           });
-          this.getServices();
+          this.$store.dispatch("getGoodsService");
         }
       });
     }
@@ -288,8 +275,8 @@ export default {
 </script>
 
 
-<style lang="scss">
-.el-upload-list__item {
+<style lang="scss" scoped>
+/deep/ .el-upload-list__item {
   transition: none !important;
 }
 </style>

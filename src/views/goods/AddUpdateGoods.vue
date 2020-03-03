@@ -184,7 +184,8 @@
 
 <script>
 import { mapState } from "vuex";
-import { uploadImg, reqAddUpdateGoods } from "../../api";
+import {uploadImg} from 'api'
+import { reqAddUpdateGoods } from "api/goods";
 export default {
   data() {
     return {
@@ -414,8 +415,8 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.el-upload-list__item {
+<style lang="scss" scoped>
+/deep/ .el-upload-list__item {
   transition: none !important;
 }
 </style>
