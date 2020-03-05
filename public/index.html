@@ -1,22 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <!-- 生产环境打包设置 -->
-    <!-- <meta base="/shopadmin/">  -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <!-- <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/global.css"> -->
-    <title>小程序商城后台管理系统</title>
-    <script src="http://api.map.baidu.com/api?v=2.0&ak=4IU3oIAMpZhfWZsMu7xzqBBAf6vMHcoa"></script>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but mini-boss doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <title>小程序商城后台管理系统</title>
+  <!-- 引入 elemnt ui css文件 -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/element-ui/2.13.0/theme-chalk/index.css">
+  <!-- 引入 富文本编辑器 css文件 -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.7/quill.core.min.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.7/quill.snow.min.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/quill/1.3.7/quill.bubble.min.css">
+  
+  <!-- 引入 vue.js(开发环境版本) 文件 -->
+  <script src="https://cdn.staticfile.org/vue/2.6.11/vue.js"></script>
+  <!-- 引入 vue.js(生成环境版本, 压缩过的) 文件 -->
+  <!-- <script src="https://cdn.staticfile.org/vue/2.6.11/vue.min.js"></script> -->
+  <!-- 引入 element ui js文件 -->
+  <script src="https://cdn.staticfile.org/element-ui/2.13.0/index.js"></script>
+  <!-- 引入 富文本编辑器 js文件 -->
+  <script src="https://cdn.staticfile.org/quill/1.3.7/quill.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.min.js"></script>
+  <!-- 定位到当前城市的api -->
+  <script src="http://api.map.baidu.com/api?v=2.0&ak=4IU3oIAMpZhfWZsMu7xzqBBAf6vMHcoa"></script>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but mini-boss doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>

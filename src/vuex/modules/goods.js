@@ -3,6 +3,7 @@ import { reqActiveList } from 'api/activity';
 import { reqGoods, reqGoodsServices } from 'api/goods';
 import { reqCategories } from 'api/category';
 import { reqMerchants } from 'api/merchant';
+import { reqOrders } from 'api/order'
 
 import {
   RECEIVE_ACTIVE_LIST,
@@ -10,7 +11,9 @@ import {
   RECEIVE_GOODS,
   RECEIVE_GOODS_SERVICE,
   RECEIVE_CATEGORIES,
-  RECEIVE_MERCHANTS
+  RECEIVE_MERCHANTS,
+  RECEIVE_ORDERS,
+  RECEIVE_BACK_ROUTE_PATH
 } from '../mutation-types';
 
 const state = {
@@ -25,6 +28,9 @@ const state = {
   categoryTotal: 0,
   merchantList: [],
   merchantTotal: 0,
+  orderList: [],
+  orderTotal: 0,
+  backRoutePath: sessionStorage.getItem('backRoutePath') || ""
 };
 
 
@@ -50,8 +56,12 @@ const actions = {
   },
   async getMerchants({ commit }) {
     const result = await reqMerchants();
-    commit(RECEIVE_MERCHANTS, result)
-  }
+    commit(RECEIVE_MERCHANTS, result);
+  },
+  async getOrders({ commit }) {
+    const result = await reqOrders();
+    commit(RECEIVE_ORDERS, result);
+  },
 };
 
 const mutations = {
@@ -79,6 +89,14 @@ const mutations = {
   [RECEIVE_MERCHANTS](state, { data, total }) {
     state.merchantList = data;
     state.merchantTotal = total;
+  },
+  [RECEIVE_ORDERS](state, { data, total }) {
+    state.orderList = data;
+    state.orderTotal = total;
+  },
+  [RECEIVE_BACK_ROUTE_PATH](state, path) {
+    state.backRoutePath = path;
+    sessionStorage.setItem('backRoutePath', path);
   }
 };
 

@@ -10,17 +10,19 @@ import {
   getUserInfo,
 } from 'api/user'
 
+import storageUtils from '@/utils/storageUtils'
+
 const state = {
-  token: localStorage.getItem('token'), // 登录token标识,
+  token: storageUtils.getToken(), // 登录token标识,
   adminUser: {},
-  adminUserList: []
+  adminUserList: null
 }
 /**
  * 包含同步action和异步action
  */
 const actions = {
   saveToken({ commit }, token) {
-    localStorage.setItem('token', token)
+    storageUtils.saveToken(token)
     commit(RECEIVE_TOKEN, { token })
   },
   async saveUser({ commit }) {
@@ -28,7 +30,7 @@ const actions = {
     commit(RECEIVE_ADMIN_USER, { user })
   },
   logout({ commit }) {
-    localStorage.removeItem('token')
+    storageUtils.removeToken()
     commit(LOGOUT)
   },
   async getUserList({ commit }) {

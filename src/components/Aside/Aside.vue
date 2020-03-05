@@ -22,7 +22,6 @@
         </template>
         <el-menu-item index="/home" style="background-color:#001529">
           <template slot="title">
-            <i class="el-icon-s-home"></i>
             <span>首页</span>
           </template>
         </el-menu-item>
@@ -43,7 +42,7 @@
 
       <el-submenu index="3">
         <template slot="title">
-          <i class="el-icon-goods"></i>
+          <i class="el-icon- iconfont icon-leimupinleifenleileibie"></i>
           <span>分类管理</span>
         </template>
         <el-menu-item index="/category/categorylist">
@@ -72,7 +71,7 @@
 
       <el-submenu index="5">
         <template slot="title">
-          <i class="el-icon-goods"></i>
+          <i class="el-icon- iconfont icon-shangjia"></i>
           <span>商家管理</span>
         </template>
         <el-menu-item index="/merchant/merchantlist">
@@ -84,7 +83,7 @@
 
       <el-submenu index="6">
         <template slot="title">
-          <i class="el-icon-goods"></i>
+          <i class="el-icon- iconfont icon-quanxianguanli"></i>
           <span>权限管理</span>
         </template>
         <el-menu-item index="/auth/userlist">
@@ -96,7 +95,7 @@
 
       <el-submenu index="7">
         <template slot="title">
-          <i class="el-icon-goods"></i>
+          <i class="el-icon- iconfont icon-huodong"></i>
           <span>活动管理</span>
         </template>
         <el-menu-item index="/active/activelist">
@@ -107,7 +106,7 @@
       </el-submenu>
       <el-submenu index="8">
         <template slot="title">
-          <i class="el-icon-goods"></i>
+          <i class="el-icon- iconfont icon-dingdanguanli"></i>
           <span>订单管理</span>
         </template>
         <el-menu-item index="/order/orderlist">

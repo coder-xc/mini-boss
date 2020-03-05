@@ -73,7 +73,6 @@
 
 <script>
 import { mapState } from "vuex";
-import { uploadImg } from "api";
 import { deleteCategory } from "api/category";
 
 export default {

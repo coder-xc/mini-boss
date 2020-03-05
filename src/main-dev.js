@@ -3,7 +3,7 @@ import App from './App.vue'
 import MyBread from 'components/MyBread/MyBread.vue'
 import router from './router'
 import store from './vuex/store'
-import './plugins/element.js'
+// import './plugins/element.js'
 import './assets/css/global.css';
 import './assets/css/reset.css';
 import './assets/fonts/iconfont.css'

@@ -31,9 +31,21 @@
         <el-table-column align="center" prop="salesVolume" label="总交易量" width="70"></el-table-column>
         <el-table-column align="center" prop="commoditiesCount" label="商品总量" width="70"></el-table-column>
         <el-table-column align="center" label="店铺评价" width="70">
-          <el-table-column align="center" prop="appraise.meet" label="描述相符" width="70"></el-table-column>
-          <el-table-column align="center" prop="appraise.rational" label="价格合理" width="70"></el-table-column>
-          <el-table-column align="center" prop="appraise.quality" label="质量满意" width="70"></el-table-column>
+          <el-table-column align="center" prop="appraise.meet" label="描述相符" width="70">
+            <template v-slot:default="slotProps">
+              <span>{{slotProps.row.appraise.meet}}星</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="appraise.rational" label="价格合理" width="70">
+            <template v-slot:default="slotProps">
+              <span>{{slotProps.row.appraise.rational}}星</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="appraise.quality" label="质量满意" width="70">
+            <template v-slot:default="slotProps">
+              <span>{{slotProps.row.appraise.quality}}星</span>
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column align="center" prop="collectCount" label="收藏量" width="70"></el-table-column>
         <el-table-column align="center" label="操作" width="200">
@@ -57,7 +69,7 @@
       <!-- 分页区域 -->
       <div style="text-align:right">
         <el-pagination
-          :total="1"
+          :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
           :page-sizes="[1,2,5,10]"
@@ -103,7 +115,7 @@
             </div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="店铺商品">
+        <el-form-item label="店铺商品" prop="commodities">
           <el-select
             clearable
             v-model="shopForm.commodities"
@@ -172,7 +184,7 @@
 <script>
 import { mapState } from "vuex";
 import { uploadImg } from "api";
-import { reqAddMerchant, reqDelMerchant } from "api/merchant";
+import { reqAddUpdateMerchant, reqDelMerchant } from "api/merchant";
 export default {
   computed: {
     ...mapState({
@@ -230,11 +242,17 @@ export default {
   },
 
   methods: {
+    /**
+     * 添加店铺
+     */
     openAddShopDialog() {
       this.isShowDialog = true;
       this.isUpdate = false;
     },
 
+    /**
+     * 编辑店铺
+     */
     openUpdateShopDialog(merchant) {
       this.isShowDialog = true;
       this.isUpdate = true;
@@ -245,16 +263,24 @@ export default {
         salesVolume,
         commoditiesCount,
         appraise,
-        collectCount
+        collectCount,
+        _id
       } = merchant;
+      
       this.$nextTick(() => {
+        this.shopForm._id = _id;
         this.shopForm.name = name;
         this.shopForm.logo = logo;
-        this.shopForm.commodities = commodities;
+        commodities.forEach(item => this.shopForm.commodities.push(item._id));
         this.shopForm.salesVolume = salesVolume;
         this.shopForm.commoditiesCount = commoditiesCount;
-        this.shopForm.appraise = appraise;
+        this.shopForm.appraise = JSON.parse(JSON.stringify(appraise));
         this.shopForm.collectCount = collectCount;
+        const tempObj = {
+          name,
+          url: logo
+        };
+        this.fileList.push(tempObj);
       });
     },
 
@@ -355,7 +381,7 @@ export default {
     addMerchant() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await reqAddMerchant(this.shopForm);
+          await reqAddUpdateMerchant(this.shopForm);
           this.isShowDialog = false;
           this.$message({
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,

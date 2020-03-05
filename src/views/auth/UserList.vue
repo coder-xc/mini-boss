@@ -25,10 +25,10 @@
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="username" label="用户名" width="200"></el-table-column>
         <el-table-column align="center" prop="createdAt" label="创建时间">
-          <template v-slot:default="slotProps">{{slotProps.row.createdAt | fromateDate}}</template>
+          <template v-slot:default="slotProps">{{slotProps.row.createdAt | formateDate}}</template>
         </el-table-column>
         <el-table-column align="center" prop="updatedAt" label="更新时间">
-          <template v-slot:default="slotProps">{{slotProps.row.updatedAt | fromateDate}}</template>
+          <template v-slot:default="slotProps">{{slotProps.row.updatedAt | formateDate}}</template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="200">
           <template v-slot:default="slotProps">
@@ -51,6 +51,7 @@
       <!-- 分页区域 -->
       <div style="text-align:right">
         <el-pagination
+          v-if="userList"
           :total="userList.length"
           layout="total, sizes, prev, pager, next, jumper"
           background
@@ -81,7 +82,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import { fromateDate } from "@/utils/dateUtils";
+import { formateDate } from "@/utils/dateUtils";
 import { addUser, updateUser, delUser } from "api/user";
 
 export default {
@@ -109,7 +110,7 @@ export default {
     })
   },
   filters: {
-    fromateDate
+    formateDate
   },
 
   created() {
@@ -188,7 +189,8 @@ export default {
           message: "删除成功!"
         });
         this.$store.dispatch("getUserList");
-      });
+      })
+      .catch(() => {});
     }
   }
 };

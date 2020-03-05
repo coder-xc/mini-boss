@@ -4,27 +4,23 @@
 import store from 'store'
 
 
-const USER_KEY = 'user_key'
+const TOKEN = 'token'
 
 export default {
-
-
-    // 保存user
-    saveUser(user) { 
-        // localStorage.setItem(USER_KEY, JSON.stringify(user))
-        store.set(USER_KEY, user)
+    // 保存token
+    saveToken(token) { 
+        store.set(TOKEN, token)
     },
 
 
-     // 需要返回一个 user 对象，如果没有，返回空对象
-    getUser() { 
-        // return JSON.parse(localStorage.getItem(USER_KEY) || '{}')
-        return store.get(USER_KEY) || {}
+     // 需要返回一个 token，如果没有，返回空字符串
+    getToken() { 
+        return store.get(TOKEN) || ""
     },
 
     // 删除保存的user
-    removeUser() {
+    removeToken() {
         // localStorage.removeItem(USER_KEY)
-        store.remove(USER_KEY)
+        store.remove(TOKEN)
      },
 }

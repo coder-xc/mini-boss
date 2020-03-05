@@ -63,7 +63,7 @@
               </el-card>
             </el-form-item>
             <el-form-item label="商品服务：">
-              <el-card>
+              <el-card v-if="currentGoods.services.length > 0">
                 <div class="service" v-for="item in currentGoods.services" :key="item._id">
                   <el-form>
                     <el-form-item label="服务名称">
@@ -78,6 +78,7 @@
                   </el-form>
                 </div>
               </el-card>
+              <span v-if="currentGoods.services.length === 0">无</span>
             </el-form-item>
             <el-form-item label="商品评论：">
               <div v-for="(item, index) in currentGoods.comments" :key="index">
@@ -110,22 +111,42 @@
 
 <script>
 import { mapState } from "vuex";
+import { RECEIVE_BACK_ROUTE_PATH } from "@/vuex/mutation-types";
 export default {
   computed: {
     ...mapState({
-      currentGoods: state => state.goods.currentGoods
+      currentGoods: state => state.goods.currentGoods,
+      backRoutePath: state => state.goods.backRoutePath
     })
   },
+
   data() {
     return {
       rules: {},
       activeNames: ["1"]
     };
   },
+
+  /**
+   * 该路由导航守卫的作用: 用于获取进入此页面前上一个页面的路由路径
+   * 在渲染该组件的对应路由被 confirm 前调用
+   * 不能获取组件实例 `this`
+   * 因为当守卫执行前，组件实例还没被创建
+   */
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      //  这里的vm指的就是vue实例，可以用来当做this使用
+      if(from.path === "/") {
+        return;
+      }
+      vm.$store.commit(RECEIVE_BACK_ROUTE_PATH, from.path);
+    });
+  },
+
   methods: {
     goBack() {
-      this.$router.replace("/goods/goodslist");
-    },
+      this.$router.replace(this.backRoutePath);
+    }
   }
 };
 </script>

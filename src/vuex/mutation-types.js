@@ -10,3 +10,5 @@ export const TOGGLE_COLLAPSE = 'toggle_collapse'
 export const RECEIVE_GOODS_SERVICE = 'receive_goods_service';
 export const RECEIVE_CATEGORIES = 'receive_categorise';
 export const RECEIVE_MERCHANTS = 'receive_merchants';
+export const RECEIVE_ORDERS = 'receive_orders';
+export const RECEIVE_BACK_ROUTE_PATH = 'receive_back_route_path'

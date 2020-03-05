@@ -7,11 +7,11 @@ import request from '@/utils/request'
 export const reqMerchants = () => request("/selles");
 
 /**
- * 添加店铺
+ * 添加/修改店铺
  */
-export const reqAddMerchant = ({name, logo, commodities, salesVolume, commoditiesCount, appraise, collectCount}) => request({
-  url: '/selles',
-  method: 'POST',
+export const reqAddUpdateMerchant = ({ name, logo, commodities, salesVolume, commoditiesCount, appraise, collectCount, _id }) => request({
+  url: `/selles${_id ? `/${_id}` : ""}`,
+  method: `${_id ? "PUT" : "POST"}`,
   data: {
     name,
     logo,
@@ -26,7 +26,7 @@ export const reqAddMerchant = ({name, logo, commodities, salesVolume, commoditie
 /**
  * 删除店铺
  */
-export const reqDelMerchant = ({_id}) => request({
+export const reqDelMerchant = ({ _id }) => request({
   url: `/selles/${_id}`,
   method: 'DELETE'
 })

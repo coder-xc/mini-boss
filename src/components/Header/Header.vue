@@ -24,7 +24,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { fromateDate } from "../../utils/dateUtils";
+import { formateDate } from "../../utils/dateUtils";
 import { reqWeather } from "../../api";
 export default {
   computed: {
@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      currentTime: fromateDate(Date.now()),
+      currentTime: formateDate(Date.now()),
       dayPictureUrl: "",
       weather: ""
     };
@@ -46,7 +46,7 @@ export default {
     // 启动 循环定时器
     this.intervalId = setInterval(() => {
       // 将 currentTime 更新为当前时间值
-      this.currentTime = fromateDate(Date.now());
+      this.currentTime = formateDate(Date.now());
     }, 1000);
   },
   beforeDestroy() {

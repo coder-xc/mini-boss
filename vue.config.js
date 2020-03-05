@@ -19,5 +19,19 @@ module.exports = {
         'api': resolve('src/api')
       }
     },
+    externals: {
+      'vue': 'Vue',
+      'element-ui': 'ELEMENT',
+      'vue-quill-editor': "VueQuillEditor"
+    },
   },
+  chainWebpack: config => {   //修改webpack打包的入口文件。需要在根目录建两个对应入口js文件
+    config.when(process.env.NODE_ENV === 'production', config => {
+      config.entry('app').clear().add('./src/main-prod.js')    //生产环境
+    })
+    config.when(process.env.NODE_ENV === 'development', config => {
+      config.entry('app').clear().add('./src/main-dev.js')     //开发环境
+    })
+  }
+  // productionSourceMap: false,
 }

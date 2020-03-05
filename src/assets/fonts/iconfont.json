@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "182088",
+      "name": "商家",
+      "font_class": "shangjia",
+      "unicode": "e6bd",
+      "unicode_decimal": 59069
+    },
+    {
+      "icon_id": "479390",
+      "name": "订单管理",
+      "font_class": "dingdanguanli",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "689262",
+      "name": "类目 品类 分类 类别",
+      "font_class": "leimupinleifenleileibie",
+      "unicode": "e7f9",
+      "unicode_decimal": 59385
+    },
+    {
       "icon_id": "1567679",
       "name": "user",
       "font_class": "user",
@@ -13,11 +34,25 @@
       "unicode_decimal": 59058
     },
     {
+      "icon_id": "2848763",
+      "name": "权限管理",
+      "font_class": "quanxianguanli",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
       "icon_id": "7155561",
       "name": "密码",
       "font_class": "mima",
       "unicode": "e658",
       "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "9851598",
+      "name": "活动",
+      "font_class": "huodong",
+      "unicode": "e611",
+      "unicode_decimal": 58897
     },
     {
       "icon_id": "11903650",
