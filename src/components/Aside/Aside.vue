@@ -81,7 +81,7 @@
         </el-menu-item>
       </el-submenu>
 
-      <el-submenu index="6">
+      <!-- <el-submenu index="6">
         <template slot="title">
           <i class="el-icon- iconfont icon-quanxianguanli"></i>
           <span>权限管理</span>
@@ -91,7 +91,7 @@
             <span>用户管理</span>
           </template>
         </el-menu-item>
-      </el-submenu>
+      </el-submenu> -->
 
       <el-submenu index="7">
         <template slot="title">
