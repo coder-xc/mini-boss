@@ -133,6 +133,7 @@ export default {
      * 打开添加/修改活动的对话框
      */
     openAddActiveDialog() {
+      if(this.activeForm._id) delete this.activeForm._id
       this.isShowDialog = true;
       this.isUpdate = false;
     },

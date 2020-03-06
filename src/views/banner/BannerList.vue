@@ -216,11 +216,12 @@ export default {
     openUpdateBannerDialog(banner) {
       this.isUpdate = true;
       this.isShowDialog = true;
-      const { url, index, title } = banner;
+      const { url, index, title, _id } = banner;
       this.$nextTick(() => {
         this.addBannerForm.url = url;
         this.addBannerForm.index = index;
         this.addBannerForm.title = title;
+        this.addBannerForm._id = _id;
         const tempObj = {
           name: title,
           url: url
@@ -233,6 +234,7 @@ export default {
      * 打开添加轮播图对话框
      */
     openAddBannerDialog() {
+      if(this.addBannerForm._id) delete this.addBannerForm._id
       this.isUpdate = false;
       this.isShowDialog = true;
     },

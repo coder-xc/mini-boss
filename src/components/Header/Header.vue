@@ -63,12 +63,7 @@ export default {
           this.$store.dispatch("logout");
           this.$router.replace("/login");
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消退出"
-          });
-        });
+        .catch(() => {});
     },
     handleCommand(command) {
       if (command === "logout") {
@@ -80,7 +75,7 @@ export default {
      */
     async getWeather() {
       const BMap = window.BMap;
-      if(!BMap) return
+      if (!BMap) return;
       const myCity = new BMap.LocalCity();
       // 获取城市名称
       myCity.get(async result => {
@@ -114,13 +109,13 @@ export default {
       width: 30px;
       height: 20px;
     }
-    .toggle{
+    .toggle {
       cursor: pointer;
       margin-right: 10px;
-      .icon-toggle-left, .icon-toggle-right {
+      .icon-toggle-left,
+      .icon-toggle-right {
         font-size: 22px;
       }
-      
     }
   }
 }

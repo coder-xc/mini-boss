@@ -1,23 +1,26 @@
-const Home = () => import('views/home/Home.vue');
-const Banner = () => import('views/banner/Banner.vue');
-const BannerList = () => import('views/banner/BannerList.vue');
-const Login = () => import('views/login/Login.vue');
-const Category = () => import('views/category/Category.vue');
-const CategoryList = () => import('views/category/CategoryList.vue');
-const Goods = () => import('views/goods/Goods.vue');
-const Acitve = () => import('views/activity/Activity.vue');
-const AcitveList = () => import('views/activity/ActivityList.vue');
-const Auth = () => import('views/auth/Auth.vue');
-const UserList = () => import('views/auth/UserList.vue');
-const AddCategory = () => import('views/category/AddCategory.vue');
-const GoodsList = () => import('views/goods/GoodsList.vue');
-const Detail = () => import('views/goods/Detail.vue');
-const GoodsService = () => import("views/goods/GoodsService.vue");
-const AddUpdateGoods = () => import('views/goods/AddUpdateGoods.vue');
-const Merchant = () => import('views/merchant/Merchant.vue');
-const MerchantList = () => import('views/merchant/MerchantList.vue');
-const Order = () => import('views/order/Order.vue')
-const OrderList = () => import('views/order/OrderList.vue')
+const Home = () => import('views/home/Home');
+const Banner = () => import('views/banner/Banner');
+const BannerList = () => import('views/banner/BannerList');
+const Login = () => import('views/login/Login');
+const Category = () => import('views/category/Category');
+const CategoryList = () => import('views/category/CategoryList');
+const Goods = () => import('views/goods/Goods');
+const Acitve = () => import('views/activity/Activity');
+const AcitveList = () => import('views/activity/ActivityList');
+const Auth = () => import('views/auth/Auth');
+const UserList = () => import('views/auth/UserList');
+const AddCategory = () => import('views/category/AddCategory');
+const GoodsList = () => import('views/goods/GoodsList');
+const Detail = () => import('views/goods/Detail');
+const GoodsService = () => import("views/goods/GoodsService");
+const AddUpdateGoods = () => import('views/goods/AddUpdateGoods');
+const Merchant = () => import('views/merchant/Merchant');
+const MerchantList = () => import('views/merchant/MerchantList');
+const Order = () => import('views/order/Order')
+const OrderList = () => import('views/order/OrderList')
+const Comment = () => import('views/comment/Comment')
+const CommentList = () => import('views/comment/CommentList')
+
 export default [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
@@ -143,6 +146,19 @@ export default [
             path: '/order/orderlist',
             component: OrderList,
             meta: { title: '订单列表' },
+          },
+        ]
+      },
+      {
+        path: '/comment',
+        component: Comment,
+        redirect: '/comment/commentlist',
+        meta: { title: '评论管理' },
+        children: [
+          {
+            path: '/comment/commentlist',
+            component: CommentList,
+            meta: { title: '评论列表' },
           },
         ]
       }

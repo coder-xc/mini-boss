@@ -81,7 +81,7 @@
         </el-menu-item>
       </el-submenu>
 
-      <!-- <el-submenu index="6">
+      <el-submenu index="6">
         <template slot="title">
           <i class="el-icon- iconfont icon-quanxianguanli"></i>
           <span>权限管理</span>
@@ -91,7 +91,7 @@
             <span>用户管理</span>
           </template>
         </el-menu-item>
-      </el-submenu> -->
+      </el-submenu>
 
       <el-submenu index="7">
         <template slot="title">
@@ -112,6 +112,17 @@
         <el-menu-item index="/order/orderlist">
           <template slot="title">
             <span>订单列表</span>
+          </template>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="9">
+        <template slot="title">
+          <i class="el-icon- iconfont icon-ziyuan"></i>
+          <span>评论管理</span>
+        </template>
+        <el-menu-item index="/comment/commentlist">
+          <template slot="title">
+            <span>评论列表</span>
           </template>
         </el-menu-item>
       </el-submenu>

@@ -32,6 +32,6 @@ module.exports = {
     config.when(process.env.NODE_ENV === 'development', config => {
       config.entry('app').clear().add('./src/main-dev.js')     //开发环境
     })
-  }
-  // productionSourceMap: false,
+  },
+  productionSourceMap: false,
 }

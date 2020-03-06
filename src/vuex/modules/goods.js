@@ -3,7 +3,8 @@ import { reqActiveList } from 'api/activity';
 import { reqGoods, reqGoodsServices } from 'api/goods';
 import { reqCategories } from 'api/category';
 import { reqMerchants } from 'api/merchant';
-import { reqOrders } from 'api/order'
+import { reqOrders } from 'api/order';
+import { reqComment } from 'api/comment';
 
 import {
   RECEIVE_ACTIVE_LIST,
@@ -13,7 +14,8 @@ import {
   RECEIVE_CATEGORIES,
   RECEIVE_MERCHANTS,
   RECEIVE_ORDERS,
-  RECEIVE_BACK_ROUTE_PATH
+  RECEIVE_BACK_ROUTE_PATH,
+  RECEIVE_COMMENTS
 } from '../mutation-types';
 
 const state = {
@@ -28,9 +30,11 @@ const state = {
   categoryTotal: 0,
   merchantList: [],
   merchantTotal: 0,
-  orderList: [],
+  orderList: null,
   orderTotal: 0,
-  backRoutePath: sessionStorage.getItem('backRoutePath') || ""
+  backRoutePath: sessionStorage.getItem('backRoutePath') || "",
+  commentList: null,
+  commentTotal: 0
 };
 
 
@@ -62,6 +66,11 @@ const actions = {
     const result = await reqOrders();
     commit(RECEIVE_ORDERS, result);
   },
+  async getComments({ commit }) {
+    const result = await reqComment();
+    commit(RECEIVE_COMMENTS, result);
+  },
+
 };
 
 const mutations = {
@@ -97,6 +106,10 @@ const mutations = {
   [RECEIVE_BACK_ROUTE_PATH](state, path) {
     state.backRoutePath = path;
     sessionStorage.setItem('backRoutePath', path);
+  },
+  [RECEIVE_COMMENTS](state, { data, total }) {
+    state.commentList = data;
+    state.commentTotal = total;
   }
 };
 

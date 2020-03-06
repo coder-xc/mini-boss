@@ -22,26 +22,30 @@
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="orderList" stripe border>
         <el-table-column align="center" type="selection" width="55"></el-table-column>
         <el-table-column align="center" type="index" label="#"></el-table-column>
-        <el-table-column align="center" prop="_id" label="订单编号" width="200"></el-table-column>
-        <el-table-column align="center" prop="username" label="用户名" width="150">
+        <el-table-column align="center" prop="_id" label="订单编号" min-width="200"></el-table-column>
+        <el-table-column align="center" prop="username" label="用户名" min-width="150">
           <template v-slot:default="slotProps">
             <span>{{slotProps.row.user.username}}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="username" label="订单商品数量">
           <template v-slot:default="slotProps">
-            <el-link v-if="slotProps.row.commoditis.length > 0" type="primary" @click="openGoodsDialog(slotProps.row)">
+            <el-link
+              v-if="slotProps.row.commoditis.length > 0"
+              type="primary"
+              @click="openGoodsDialog(slotProps.row)"
+            >
               <span>{{slotProps.row.commoditis.length}}件</span>
             </el-link>
             <span v-else>{{slotProps.row.commoditis.length}}件</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="createdAt" label="创建时间">
+        <el-table-column align="center" prop="createdAt" label="创建时间" min-width="140">
           <template v-slot:default="slotProps">
             <span>{{slotProps.row.createdAt | formateDate}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="updatedAt" label="更新时间">
+        <el-table-column align="center" prop="updatedAt" label="更新时间" min-width="140">
           <template v-slot:default="slotProps">
             <span>{{slotProps.row.updatedAt | formateDate}}</span>
           </template>
@@ -54,7 +58,7 @@
               size="mini"
               @click="openUpdateOrderDialog(slotProps.row)"
             >修改</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="delOrder(slotProps.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -148,7 +152,7 @@
 <script>
 import { mapState } from "vuex";
 import { formateDate } from "@/utils/dateUtils";
-import { reqAddOrder } from "api/order";
+import { reqAddUpdateOrder, reqDelOrder } from "api/order";
 export default {
   computed: {
     ...mapState({
@@ -160,18 +164,18 @@ export default {
   },
   data() {
     return {
-      currentDate: new Date(),
-      loading: true,
-      isShowShopDialog: false,
-      orderDetail: null,
-      currentCategory: null,
-      isUpdate: false,
-      isShowAddUpdateDialog: false,
+      loading: true, // loading状态
+      isShowShopDialog: false, // 是否显示查看商品对话框
+      orderDetail: null, // 查看商品时对应的商品数据
+      isUpdate: false, // 是否更新订单
+      isShowAddUpdateDialog: false, // 是否显示添加/修改订单对话框
       orderForm: {
+        // 添加/修改订单的Form表单数据
         commoditis: [],
         user: ""
       },
       orderFormRules: {
+        // 添加/修改订单的Form表单验证规则
         commoditis: [
           { required: true, message: "请选择下单商品", trigger: "blur" }
         ],
@@ -195,38 +199,59 @@ export default {
   },
 
   methods: {
+    /**
+     * 打开查看商品对话框
+     */
     openGoodsDialog(order) {
       this.isShowShopDialog = true;
       this.orderDetail = order;
     },
 
+    /**
+     * 对话框中查看商品详情
+     */
     goGoodsDetail(goods) {
       this.$store.dispatch("saveGoods", goods);
       this.$router.push("/goods/detail");
     },
+
+    /**
+     * 打开添加订单对话框
+     */
     openAddOrderDialog() {
+      if(this.orderForm._id) delete this.orderForm._id
       this.isUpdate = false;
       this.isShowAddUpdateDialog = true;
     },
+
+    /**
+     * 打开修改订单对话框
+     */
     openUpdateOrderDialog(order) {
       this.isUpdate = true;
       this.isShowAddUpdateDialog = true;
-      const { commoditis, user } = order;
+      const { commoditis, user, _id } = order;
       this.$nextTick(() => {
-        order.commoditis.forEach(item =>
-          this.orderForm.commoditis.push(item._id)
-        );
+        commoditis.forEach(item => this.orderForm.commoditis.push(item._id));
         this.orderForm.user = user._id;
+        this.orderForm._id = _id;
       });
     },
 
+    /**
+     * 对话框关闭时
+     */
     dialogClose() {
       this.$refs.form.resetFields();
     },
+
+    /**
+     * 点击确定按钮: 添加/修改订单
+     */
     async addOrder() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await reqAddOrder(this.orderForm);
+          await reqAddUpdateOrder(this.orderForm);
           this.isShowAddUpdateDialog = false;
           this.$message({
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
@@ -234,6 +259,21 @@ export default {
           });
           this.$store.dispatch("getOrders").then(() => (this.loading = false));
         }
+      });
+    },
+
+    delOrder(order) {
+      this.$confirm("确定删除该订单吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(async () => {
+        await reqDelOrder(order);
+        this.$message({
+          type: "success",
+          message: "删除成功!"
+        });
+        this.$store.dispatch("getOrders").then(() => (this.loading = false));
       });
     }
   }

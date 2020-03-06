@@ -122,9 +122,7 @@ export default {
      * 打开添加/修改用户对话框
      */
     openAddUserDialog() {
-      if (this.addUserForm._id) {
-        delete this.addUserForm._id;
-      }
+      if (this.addUserForm._id) delete this.addUserForm._id;
       this.isUpdate = false;
       this.isShowDialog = true;
     },
@@ -175,22 +173,23 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(async () => {
-        if (user._id === this.user._id) {
-          this.$message({
-            type: "error",
-            message: "不能删除当前登录用户!"
-          });
-          return;
-        }
-        await delUser(user);
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
-        this.$store.dispatch("getUserList");
       })
-      .catch(() => {});
+        .then(async () => {
+          if (user._id === this.user._id) {
+            this.$message({
+              type: "error",
+              message: "不能删除当前登录用户!"
+            });
+            return;
+          }
+          await delUser(user);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.$store.dispatch("getUserList");
+        })
+        .catch(() => {});
     }
   }
 };

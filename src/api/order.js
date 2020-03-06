@@ -8,13 +8,21 @@ export const reqOrders = () => request({
 })
 
 /**
- * 添加订单
+ * 添加/修改订单
  */
-export const reqAddOrder = ({commoditis, user}) => request({
-  url: "/orders",
-  method: 'POST',
+export const reqAddUpdateOrder = ({ commoditis, user, _id }) => request({
+  url: `/orders${_id ? `/${_id}` : ""}`,
+  method: `${_id ? 'PUT' : 'POST'}`,
   data: {
     commoditis,
     user
   }
+})
+
+/**
+ * 删除订单
+ */
+export const reqDelOrder = ({ _id }) => request({
+  url: `/orders/${_id}`,
+  method: 'DELETE'
 })

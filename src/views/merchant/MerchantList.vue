@@ -246,6 +246,7 @@ export default {
      * 添加店铺
      */
     openAddShopDialog() {
+      if (this.shopForm._id) delete this.shopForm._id;
       this.isShowDialog = true;
       this.isUpdate = false;
     },
@@ -266,7 +267,7 @@ export default {
         collectCount,
         _id
       } = merchant;
-      
+
       this.$nextTick(() => {
         this.shopForm._id = _id;
         this.shopForm.name = name;
@@ -350,6 +351,9 @@ export default {
      */
     checkNumber(rule, value, callback) {
       let tip = "该值不能为空";
+      if (!value) {
+        return callback(new Error(tip));
+      }
       if (rule.field === "collectCount") {
         tip = "请输入收藏量";
       } else if (rule.field === "commoditiesCount") {
@@ -357,10 +361,8 @@ export default {
       } else if (rule.field === "salesVolume") {
         tip = "请输入总交易量";
       }
-      if (!value) {
-        return callback(new Error(tip));
-      }
-      if (!Number.isInteger(value)) {
+      const reg = /^[1-9]\d*$/
+      if (!reg.test(value)) {
         callback(new Error("请输入数字值"));
       } else {
         callback();
@@ -394,6 +396,9 @@ export default {
       });
     },
 
+    /**
+     * 删除店铺
+     */
     delMerchant(merchant) {
       this.$confirm("确定删除该店铺吗?", "提示", {
         confirmButtonText: "确定",

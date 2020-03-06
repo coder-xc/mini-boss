@@ -130,7 +130,7 @@ export default {
         name: "addCategory",
         params: {
           type: "edit",
-          category: category,
+          category,
           parentCategoryList: this.parentCategoryList
         }
       });
