@@ -16,7 +16,11 @@
       >
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user" placeholder="请输入用户名"></el-input>
+          <el-input
+            v-model="loginForm.username"
+            prefix-icon="iconfont icon-user"
+            placeholder="请输入用户名"
+          ></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
@@ -38,8 +42,14 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import { login } from "api/user";
 export default {
+  computed: {
+    ...mapState({
+      user: state => state.adminUser.adminUser
+    })
+  },
   data() {
     return {
       // 这是登录表单的数据绑定对象
@@ -69,20 +79,30 @@ export default {
     },
 
     login() {
-      this.$refs.loginFormRef.validate(async valid => {
+      this.$refs.loginFormRef.validate(valid => {
         if (!valid) return;
-        // 调用登录接口
-        const result = await login(this.loginForm);
-        // 登录成功
-        const { token } = result;
-         // 保存token
-        // 1. 将登录成功之后的 token，保存到客户端的 sessionStorage 中, 通过vuex来保存
-        this.$store.dispatch("saveToken", 'bearer  ' + token);
-        this.$message.success("登录成功");
-        // 登录成功后，根据token获取用户信息
-        this.$store.dispatch("saveUser")
-        // 2. 通过编程式导航跳转到后台主页，路由地址是 /home
-        this.$router.push("/home");
+        this.$message({
+          message: "登录中...",
+          type: "warning",
+          duration: 500,
+          onClose: async () => {
+            // 调用登录接口
+            const result = await login(this.loginForm).catch(err => {
+              this.$message.error("用户名或密码错误，请重新输入");
+            });
+            if (!result) return;
+            // 登录成功
+            const { token } = result;
+            // 保存token
+            // 1. 将登录成功之后的 token，保存到客户端的 localStorage 中, 通过vuex来保存
+            this.$store.dispatch("saveToken", "bearer  " + token);
+            // 登录成功后，根据token获取用户信息
+            await this.$store.dispatch("saveUser");
+            this.$message.success("登录成功，欢迎您：" + this.user.username);
+            // 2. 通过编程式导航跳转到后台主页，路由地址是 /home
+            this.$router.push("/home");
+          }
+        });
       });
     }
   }

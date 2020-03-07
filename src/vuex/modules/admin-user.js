@@ -33,8 +33,8 @@ const actions = {
     storageUtils.removeToken()
     commit(LOGOUT)
   },
-  async getUserList({ commit }) {
-    const userList = await getAdminUser()
+  async getUserList({ commit }, query) {
+    const userList = await getAdminUser(query)
     commit(RECEIVE_USER_LIST, { userList })
   },
 }

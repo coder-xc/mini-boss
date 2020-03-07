@@ -54,10 +54,12 @@
       <!-- 分页区域 -->
       <div style="text-align:right">
         <el-pagination
-          :total="1"
+          :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -70,7 +72,9 @@ import { reqDelGoods } from "api/goods";
 export default {
   data() {
     return {
-      loading: true
+      loading: true,
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 }
     };
   },
   computed: {
@@ -80,9 +84,32 @@ export default {
     })
   },
   created() {
-    this.$store.dispatch("getGoods").then(() => (this.loading = false));
+    this.getGoods();
   },
   methods: {
+    /**
+     * 获取商品列表
+     */
+    getGoods() {
+      this.$store
+        .dispatch("getGoods", this.searchQuery)
+        .then(() => (this.loading = false));
+    },
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getGoods();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getGoods();
+    },
     goDetail(goods) {
       this.$store.dispatch("saveGoods", goods);
       this.$router.replace("/goods/detail");

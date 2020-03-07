@@ -24,7 +24,7 @@ const state = {
   goodsList: null,
   goodsTotal: 0,
   currentGoods: JSON.parse(sessionStorage.getItem('goods') || '{}'),
-  goodsService: [],
+  goodsService: null,
   servicesTotal: 0,
   categoryList: [],
   categoryTotal: 0,
@@ -39,35 +39,35 @@ const state = {
 
 
 const actions = {
-  async getActiveList({ commit }) {
-    const result = await reqActiveList();
+  async getActiveList({ commit }, query) {
+    const result = await reqActiveList(query);
     commit(RECEIVE_ACTIVE_LIST, result);
   },
-  async getGoods({ commit }) {
-    const result = await reqGoods()
+  async getGoods({ commit }, query) {
+    const result = await reqGoods(query)
     commit(RECEIVE_GOODS_LIST, result);
   },
   saveGoods({ commit }, goods) {
     commit(RECEIVE_GOODS, goods);
   },
-  async getGoodsService({ commit }) {
-    const result = await reqGoodsServices();
+  async getGoodsService({ commit }, query) {
+    const result = await reqGoodsServices(query);
     commit(RECEIVE_GOODS_SERVICE, result);
   },
-  async getCategory({ commit }) {
-    const result = await reqCategories();
+  async getCategory({ commit }, query) {
+    const result = await reqCategories(query);
     commit(RECEIVE_CATEGORIES, result)
   },
-  async getMerchants({ commit }) {
-    const result = await reqMerchants();
+  async getMerchants({ commit }, query) {
+    const result = await reqMerchants(query);
     commit(RECEIVE_MERCHANTS, result);
   },
-  async getOrders({ commit }) {
-    const result = await reqOrders();
+  async getOrders({ commit }, query) {
+    const result = await reqOrders(query);
     commit(RECEIVE_ORDERS, result);
   },
-  async getComments({ commit }) {
-    const result = await reqComment();
+  async getComments({ commit }, query) {
+    const result = await reqComment(query);
     commit(RECEIVE_COMMENTS, result);
   },
 

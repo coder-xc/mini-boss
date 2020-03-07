@@ -26,8 +26,8 @@ export const getUserInfo = () => request({
 /**
  * 获取所有后台系统的用户
  */
-export const getAdminUser = () => request({
-  url: '/auth/users',
+export const getAdminUser = (query) => request({
+  url: `/auth/users?query=${JSON.stringify(query)}`,
   headers: {
     checkToken: true
   }

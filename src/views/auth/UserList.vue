@@ -55,7 +55,9 @@
           :total="userList.length"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -99,6 +101,8 @@ export default {
         ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       isShowDialog: false,
       isUpdate: false
     };
@@ -114,10 +118,19 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getUserList").then(() => (this.loading = false));
+    this.getUserList();
   },
 
   methods: {
+    /**
+     * 获取用户列表
+     */
+    getUserList() {
+      this.$store
+        .dispatch("getUserList", this.searchQuery)
+        .then(() => (this.loading = false));
+    },
+
     /**
      * 打开添加/修改用户对话框
      */
@@ -126,6 +139,23 @@ export default {
       this.isUpdate = false;
       this.isShowDialog = true;
     },
+
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getUserList();
+    },
+    
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getUserList();
+    },
+
     /**
      * 关闭对话框
      */
@@ -147,7 +177,7 @@ export default {
         message: `${this.isUpdate ? "修改成功!" : "添加成功!"}`,
         type: "success"
       });
-      this.$store.dispatch("getUserList");
+      this.$store.dispatch("getUserList", this.searchQuery);
       this.isShowDialog = false;
     },
     /**

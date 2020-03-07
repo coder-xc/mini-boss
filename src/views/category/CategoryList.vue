@@ -64,7 +64,9 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -79,7 +81,9 @@ export default {
   data() {
     return {
       loading: true,
-      parentCategoryList: [] // 一级分类
+      parentCategoryList: [], // 一级分类
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 }
     };
   },
 
@@ -99,7 +103,7 @@ export default {
      * 获取分类列表
      */
     async getCategoryList() {
-      await this.$store.dispatch("getCategory");
+      await this.$store.dispatch("getCategory", this.searchQuery);
       this.loading = false;
       this.categoryList.forEach(category => {
         if (!category.parent) {
@@ -110,6 +114,16 @@ export default {
           }
         }
       });
+    },
+
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getCategoryList();
+    },
+
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getCategoryList();
     },
 
     /**

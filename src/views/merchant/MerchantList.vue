@@ -72,7 +72,9 @@
           :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -183,6 +185,7 @@
 
 <script>
 import { mapState } from "vuex";
+import _cloneDeep from "lodash/cloneDeep";
 import { uploadImg } from "api";
 import { reqAddUpdateMerchant, reqDelMerchant } from "api/merchant";
 export default {
@@ -228,6 +231,8 @@ export default {
           { validator: this.checkNumber, trigger: "blur" }
         ]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       fileList: [],
       previewPath: "",
       previewVisible: false
@@ -235,13 +240,39 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getMerchants").then(() => (this.loading = false));
+    this.getMerchant();
+    /**
+     * 不存在: 获取数据; 存在: 但数据只有10条以下, 也获取数据
+     */
     if (!this.goodsList) {
-      this.$store.dispatch("getGoods");
+      this.$store.dispatch("getGoods", {});
+    }
+    if (this.goodsList && this.goodsList.length <= 10) {
+      this.$store.dispatch("getGoods", {});
     }
   },
 
   methods: {
+    getMerchant() {
+      this.$store
+        .dispatch("getMerchants", this.searchQuery)
+        .then(() => (this.loading = false));
+    },
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getMerchant();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getMerchant();
+    },
     /**
      * 添加店铺
      */
@@ -275,7 +306,7 @@ export default {
         commodities.forEach(item => this.shopForm.commodities.push(item._id));
         this.shopForm.salesVolume = salesVolume;
         this.shopForm.commoditiesCount = commoditiesCount;
-        this.shopForm.appraise = JSON.parse(JSON.stringify(appraise));
+        this.shopForm.appraise = _cloneDeep(appraise);
         this.shopForm.collectCount = collectCount;
         const tempObj = {
           name,
@@ -361,7 +392,7 @@ export default {
       } else if (rule.field === "salesVolume") {
         tip = "请输入总交易量";
       }
-      const reg = /^[1-9]\d*$/
+      const reg = /^[1-9]\d*$/;
       if (!reg.test(value)) {
         callback(new Error("请输入数字值"));
       } else {
@@ -390,7 +421,7 @@ export default {
             type: "success"
           });
           this.$store
-            .dispatch("getMerchants")
+            .dispatch("getMerchants", this.searchQuery)
             .then(() => (this.loading = false));
         }
       });

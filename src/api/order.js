@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取订单列表
  */
-export const reqOrders = () => request({
-  url: "/orders"
+export const reqOrders = (query) => request({
+  url: `/orders?query=${JSON.stringify(query)}`
 })
 
 /**

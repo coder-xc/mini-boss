@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取轮播图
  */
-export const reqBanner = () => request({
-  url: '/banners',
+export const reqBanner = (query) => request({
+  url: `/banners?query=${JSON.stringify(query)}`,
   headers: {
     checkToken: true
   }

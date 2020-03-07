@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取活动列表
  */
-export const reqActiveList = () => request({
-  url: '/action'
+export const reqActiveList = (query) => request({
+  url: `/action?query=${JSON.stringify(query)}`
 })
 
 /**

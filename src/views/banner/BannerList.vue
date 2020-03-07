@@ -54,7 +54,9 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -134,6 +136,8 @@ export default {
         url: [{ required: true, message: "请添加图片", trigger: "blur" }],
         index: [{ required: true, message: "请选择权重", trigger: "blur" }]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       fileList: [],
       isUpdate: false,
       previewPath: "",
@@ -148,10 +152,26 @@ export default {
      * 调接口获取轮播图数据
      */
     async getBanners() {
-      const result = await reqBanner();
+      const result = await reqBanner(this.searchQuery);
       this.loading = false;
       this.bannerList = result.data;
       this.total = result.total;
+    },
+
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getBanners();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getBanners();
     },
 
     /**
@@ -234,7 +254,7 @@ export default {
      * 打开添加轮播图对话框
      */
     openAddBannerDialog() {
-      if(this.addBannerForm._id) delete this.addBannerForm._id
+      if (this.addBannerForm._id) delete this.addBannerForm._id;
       this.isUpdate = false;
       this.isShowDialog = true;
     },

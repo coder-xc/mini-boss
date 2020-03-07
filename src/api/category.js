@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取分类列表
  */
-export const reqCategories = () => request({
-  url: '/categories',
+export const reqCategories = (query) => request({
+  url: `/categories?query=${JSON.stringify(query)}`,
   headers: {
     checkToken: true
   }

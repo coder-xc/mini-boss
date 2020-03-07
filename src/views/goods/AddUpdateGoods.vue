@@ -184,7 +184,7 @@
 
 <script>
 import { mapState } from "vuex";
-import {uploadImg} from 'api'
+import { uploadImg } from "api";
 import { reqAddUpdateGoods } from "api/goods";
 export default {
   data() {
@@ -245,13 +245,15 @@ export default {
   },
 
   created() {
+    console.log(this.services)
+    if (!this.services) this.$store.dispatch("getGoodsService", {});
     this.getCategories();
     const { type } = this.$route.params;
     if (type === "add") {
       this.isUpdate = false;
     } else if (type === "update") {
       this.isUpdate = true;
-      
+
       const {
         attributes,
         category,
@@ -274,7 +276,7 @@ export default {
           url: img,
           name: new Date().getTime()
         };
-        this.fileList.push(tempPic)
+        this.fileList.push(tempPic);
       });
 
       this.goodsForm.prices.hotPrice = hotPrice;
@@ -406,7 +408,7 @@ export default {
     async save() {
       await reqAddUpdateGoods(this.goodsForm);
       this.$message({
-        message: `${this.isUpdate ? '修改' : '添加'}商品成功！`,
+        message: `${this.isUpdate ? "修改" : "添加"}商品成功！`,
         type: "success"
       });
       this.$router.replace("/goods/goodslist");

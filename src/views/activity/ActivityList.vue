@@ -57,7 +57,9 @@
           :total="activeTotal"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -117,6 +119,8 @@ export default {
         title: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
         icon: [{ required: true, message: "请添加图片", trigger: "change" }]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       fileList: [], // 上传图片的列表
       previewPath: "", // 预览的图片地址
       previewVisible: false, // 是否显示预览图片
@@ -126,14 +130,24 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getActiveList").then(() => (this.loading = false));
+    this.getActive()
   },
   methods: {
+
+    /**
+     * 获取活动列表
+     */
+    getActive() {
+      this.$store
+        .dispatch("getActiveList", this.searchQuery)
+        .then(() => (this.loading = false));
+    },
+
     /**
      * 打开添加/修改活动的对话框
      */
     openAddActiveDialog() {
-      if(this.activeForm._id) delete this.activeForm._id
+      if (this.activeForm._id) delete this.activeForm._id;
       this.isShowDialog = true;
       this.isUpdate = false;
     },
@@ -144,6 +158,22 @@ export default {
     dialogClose() {
       this.$refs.form.resetFields();
       this.fileList = [];
+    },
+    
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getActive()
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getActive()
     },
 
     /**
@@ -172,7 +202,7 @@ export default {
             type: "success",
             message: `${this.isUpdate ? "修改成功!" : "添加成功!"}`
           });
-          this.$store.dispatch("getActiveList");
+          this.$store.dispatch("getActiveList", this.searchQuery);
         } else {
           return false;
         }

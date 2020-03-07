@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取商品
  */
-export const reqGoods = () => request({
-  url: '/commodities',
+export const reqGoods = (query) => request({
+  url: `/commodities?query=${JSON.stringify(query)}`,
 })
 
 /**
@@ -30,7 +30,7 @@ export const reqDelGoods = ({ _id }) => request({
 /**
  * 获取商品服务
  */
-export const reqGoodsServices = () => request('/services')
+export const reqGoodsServices = (query) => request(`/services?query=${JSON.stringify(query)}`)
 
 /**
  * 添加/修改商品服务

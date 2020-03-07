@@ -28,7 +28,7 @@
             <span>{{slotProps.row.user.username}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="username" label="订单商品数量">
+        <el-table-column align="center" label="订单商品数量" min-width="100">
           <template v-slot:default="slotProps">
             <el-link
               v-if="slotProps.row.commoditis.length > 0"
@@ -58,7 +58,12 @@
               size="mini"
               @click="openUpdateOrderDialog(slotProps.row)"
             >修改</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="delOrder(slotProps.row)">删除</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="delOrder(slotProps.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +74,9 @@
           :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -169,6 +176,8 @@ export default {
       orderDetail: null, // 查看商品时对应的商品数据
       isUpdate: false, // 是否更新订单
       isShowAddUpdateDialog: false, // 是否显示添加/修改订单对话框
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       orderForm: {
         // 添加/修改订单的Form表单数据
         commoditis: [],
@@ -189,16 +198,44 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getOrders").then(() => (this.loading = false));
+    this.getOrder();
+    /**
+     * 不存在: 获取数据; 存在: 但数据只有10条以下, 也获取数据
+     */
     if (!this.goodsList) {
-      this.$store.dispatch("getGoods");
+      this.$store.dispatch("getGoods", {});
     }
+    if (this.goodsList && this.goodsList.length <= 10) {
+      this.$store.dispatch("getGoods", {});
+    }
+
     if (!this.adminUserList) {
-      this.$store.dispatch("getUserList");
+      this.$store.dispatch("getUserList", {});
+    }
+    if (this.adminUserList && this.adminUserList.length <= 10) {
+      this.$store.dispatch("getUserList", {});
     }
   },
 
   methods: {
+    getOrder() {
+      this.$store.dispatch("getOrders", this.searchQuery).then(() => (this.loading = false));
+    },
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getOrder();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getOrder();
+    },
     /**
      * 打开查看商品对话框
      */
@@ -219,7 +256,7 @@ export default {
      * 打开添加订单对话框
      */
     openAddOrderDialog() {
-      if(this.orderForm._id) delete this.orderForm._id
+      if (this.orderForm._id) delete this.orderForm._id;
       this.isUpdate = false;
       this.isShowAddUpdateDialog = true;
     },
@@ -257,7 +294,7 @@ export default {
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
             type: "success"
           });
-          this.$store.dispatch("getOrders").then(() => (this.loading = false));
+          this.$store.dispatch("getOrders", this.searchQuery).then(() => (this.loading = false));
         }
       });
     },

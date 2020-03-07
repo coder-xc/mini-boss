@@ -53,7 +53,9 @@
           :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -124,6 +126,8 @@ export default {
         ],
         icon: [{ required: true, message: "请添加服务图标", trigger: "blur" }]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       fileList: [], // 上传的文件列表
       previewVisible: false, // 是否显示预览图片对话框
       previewPath: "", // 预览的图片地址
@@ -132,8 +136,7 @@ export default {
     };
   },
   created() {
-    // this.$store.dispatch('getGoodsService')
-    // this.getServices();
+    this.getGoodsService();
   },
   computed: {
     ...mapState({
@@ -142,6 +145,24 @@ export default {
     })
   },
   methods: {
+    getGoodsService() {
+      this.$store.dispatch("getGoodsService", this.searchQuery);
+    },
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getGoods();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getGoods();
+    },
     /**
      * 监听上传图片组件
      */
@@ -266,7 +287,7 @@ export default {
             message: `${this.isUpdate ? "修改" : "添加"}成功!`,
             type: "success"
           });
-          this.$store.dispatch("getGoodsService");
+          this.$store.dispatch("getGoodsService", this.searchQuery);
         }
       });
     }

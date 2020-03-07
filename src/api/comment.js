@@ -3,8 +3,8 @@ import request from '@/utils/request'
 /**
  * 获取评论
  */
-export const reqComment = () => request({
-  url: '/comments'
+export const reqComment = (query) => request({
+  url: `/comments?query=${JSON.stringify(query)}`
 })
 
 /**

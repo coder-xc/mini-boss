@@ -24,7 +24,11 @@
         <el-table-column align="center" prop="message" label="评论内容" min-width="200"></el-table-column>
         <el-table-column align="center" prop="images" label="评论图片" min-width="150">
           <template v-slot:default="slotProps">
-            <el-link v-if="slotProps.row.images.length > 0" type="primary" @click="openImageDeatil(slotProps.row)">
+            <el-link
+              v-if="slotProps.row.images.length > 0"
+              type="primary"
+              @click="openImageDeatil(slotProps.row)"
+            >
               <span>{{slotProps.row.images.length}}张</span>
             </el-link>
             <span v-else>{{slotProps.row.images.length}}张</span>
@@ -52,10 +56,12 @@
       <!-- 分页区域 -->
       <div style="text-align:right">
         <el-pagination
-          :total="1"
+          :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           background
-          :page-sizes="[1,2,5,10]"
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
         ></el-pagination>
       </div>
     </el-card>
@@ -150,12 +156,15 @@
 
 <script>
 import { mapState } from "vuex";
+
 import { uploadImg } from "api";
 import { reqAddUpdateComment, reqDelComment } from "api/comment";
+
 export default {
   computed: {
     ...mapState({
       commentList: state => state.goods.commentList,
+      total: state => state.goods.commentTotal,
       orderList: state => state.goods.orderList
     })
   },
@@ -181,6 +190,8 @@ export default {
         ]
         // images: [{ required: true, message: "请上传评论图片", trigger: "blur" }]
       },
+      pageSize: [5, 10, 15, 20],
+      searchQuery: { limit: 10, page: 1 },
       fileList: [],
       previewPath: "",
       previewVisible: false
@@ -188,11 +199,33 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getComments");
-    if (!this.orderList) this.$store.dispatch("getOrders");
+    this.getComment();
+    if (!this.orderList) this.$store.dispatch("getOrders", {});
   },
 
   methods: {
+    /**
+     * 获取评论列表
+     */
+    getComment() {
+      this.$store.dispatch("getComments", this.searchQuery);
+    },
+
+    /**
+     * 每页/条改变时触发
+     */
+    sizeChange(size) {
+      this.searchQuery.limit = size;
+      this.getComment();
+    },
+
+    /**
+     * 页码改变时触发
+     */
+    pageChange(page) {
+      this.searchQuery.page = page;
+      this.getComment();
+    },
     /**
      * 查看图片
      */
@@ -258,7 +291,8 @@ export default {
       this.$notify({
         title: "成功",
         message: "图片上传成功！",
-        type: "success"
+        type: "success",
+        duration: 1500
       });
       this.commentForm.images.push(result.url);
       this.$refs.form.validateField("images");
@@ -306,13 +340,10 @@ export default {
     addComment() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await reqAddUpdateComment(this.commentForm)
+          await reqAddUpdateComment(this.commentForm);
           this.isShowAddUpdateDialog = false;
-          this.$message({
-            message: `${this.isUpdate ? "修改" : "添加"}成功!`,
-            type: "success"
-          });
-          this.$store.dispatch("getComments");
+          this.$message.success(`${this.isUpdate ? "修改" : "添加"}成功!`);
+          this.$store.dispatch("getComments", this.searchQuery);
         }
       });
     },

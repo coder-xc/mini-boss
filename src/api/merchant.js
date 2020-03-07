@@ -4,7 +4,7 @@ import request from '@/utils/request'
 /**
  * 获取店铺列表
  */
-export const reqMerchants = () => request("/selles");
+export const reqMerchants = (query) => request(`/selles?query=${JSON.stringify(query)}`);
 
 /**
  * 添加/修改店铺

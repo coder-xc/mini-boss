@@ -6,7 +6,7 @@
 <script>
 export default {
   created() {
-    this.$store.dispatch('getGoodsService')
+    // this.$store.dispatch('getGoodsService')
   }
 }
 </script>
