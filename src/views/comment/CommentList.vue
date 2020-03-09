@@ -2,17 +2,17 @@
   <div>
     <my-bread />
     <!-- 卡片区域 -->
-    <el-card>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input placeholder="请输入内容" clearable>
+    <el-card class="filter">
+      <el-row>
+        <el-col class="input" :xs="24" :md="7">
+          <el-input v-model="searchName" type="text" placeholder="请输入评论内容" clearable>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-col>
-        <el-col :span="3">
+        <el-col class="search" :xs="8" :md="3">
           <el-button type="primary">查询</el-button>
         </el-col>
-        <el-col :span="2">
+        <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddCommentDialog">添加评论</el-button>
         </el-col>
       </el-row>
@@ -171,6 +171,7 @@ export default {
 
   data() {
     return {
+      searchName: '',
       loading: false,
       isShowImgDialog: false,
       isUpdate: false,
@@ -274,7 +275,7 @@ export default {
     /**
      * 监听上传图片组件的事件
      */
-    async handleChange(file, fileList) {
+    async handleChange(file) {
       const files = file.raw;
       if (!this.imgLoading) {
         this.imgLoading = this.$notify({
@@ -356,14 +357,18 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(async () => {
-        await reqDelComment(comment);
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
-        this.$store.dispatch("getComments").then(() => (this.loading = false));
-      });
+      })
+        .then(async () => {
+          await reqDelComment(comment);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.$store
+            .dispatch("getComments")
+            .then(() => (this.loading = false));
+        })
+        .catch(() => {});
     }
   }
 };

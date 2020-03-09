@@ -6,7 +6,7 @@ import axios from 'axios';
 import router from '@/router'
 import store from '@/vuex/store'
 import { serverURL } from '@/utils/serverConfig'
-let v = new Vue()
+import { Message } from 'element-ui'
 
 const instance = axios.create({
   baseURL: serverURL
@@ -59,11 +59,11 @@ instance.interceptors.response.use(
     if (!error.response) {
       // 取消请求特殊处理
       if (error.message.code === 600) {
-        v.$message.warning(error.message.msg)
+        Message.warning(error.message.msg)
         return;
       }
       // 提示错误, 并且跳转到登录页
-      v.$message.error(error.message)
+      Message.error(error.message)
       router.replace('/login')
     } else {
       // 2. 发了请求, 但账号密码错误
@@ -72,14 +72,14 @@ instance.interceptors.response.use(
         // 3. 发了请求, 但token失效了
         store.dispatch('logout')
         if (router.currentRoute.path !== '/login') {
-          v.$message.error('授权失败，请重新登录!')
+          Message.error('授权失败，请重新登录!')
           router.replace('/login')
         }
       } else if (error.response.status === 404) {
         // 4. 发了请求, 资源不存在404
-        v.$message.error('您请求的资源不存在!')
+        Message.error('您请求的资源不存在!')
       } else {
-        v.$message.error('请求错误，请检查网络后重试!')
+        Message.error('请求错误，请检查网络后重试!')
       }
     }
     return new Promise(() => { }) // 返回一个pedding状态的promise

@@ -3,24 +3,24 @@
     <!-- 头部面包屑区域 -->
     <my-bread />
     <!-- 卡片区域 -->
-    <el-card>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input placeholder="请输入内容" clearable>
+    <el-card class="filter">
+      <el-row>
+        <el-col class="input" :xs="24" :md="7">
+          <el-input v-model="searchName" placeholder="请输入活动名称" clearable>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-col>
-        <el-col :span="3">
+        <el-col class="search" :xs="8" :md="3">
           <el-button type="primary">查询</el-button>
         </el-col>
-        <el-col :span="2">
+        <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddActiveDialog">添加活动</el-button>
         </el-col>
       </el-row>
 
       <!-- 表格数据渲染区域 -->
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="activeList" stripe border>
-        <el-table-column align="center" type="selection" width="55"></el-table-column>
+        <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="title" label="活动名称" width="200"></el-table-column>
         <el-table-column align="center" prop="icon" label="活动图片">
@@ -33,7 +33,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作">
+        <el-table-column align="center" label="操作" width="200">
           <template v-slot:default="slotProps">
             <el-button
               type="primary"
@@ -111,6 +111,7 @@ export default {
   data() {
     return {
       loading: true,
+      searchName:'',
       activeForm: {
         title: "",
         icon: ""
@@ -130,10 +131,9 @@ export default {
   },
 
   created() {
-    this.getActive()
+    this.getActive();
   },
   methods: {
-
     /**
      * 获取活动列表
      */
@@ -159,13 +159,13 @@ export default {
       this.$refs.form.resetFields();
       this.fileList = [];
     },
-    
+
     /**
      * 每页/条改变时触发
      */
     sizeChange(size) {
       this.searchQuery.limit = size;
-      this.getActive()
+      this.getActive();
     },
 
     /**
@@ -173,7 +173,7 @@ export default {
      */
     pageChange(page) {
       this.searchQuery.page = page;
-      this.getActive()
+      this.getActive();
     },
 
     /**
@@ -238,14 +238,16 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(async () => {
-        await delActive(active);
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
-        this.$store.dispatch("getActiveList");
-      });
+      })
+        .then(async () => {
+          await delActive(active);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.$store.dispatch("getActiveList");
+        })
+        .catch(() => {});
     }
   }
 };

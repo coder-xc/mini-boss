@@ -87,7 +87,7 @@ export default {
           duration: 500,
           onClose: async () => {
             // 调用登录接口
-            const result = await login(this.loginForm).catch(err => {
+            const result = await login(this.loginForm).catch(() => {
               this.$message.error("用户名或密码错误，请重新输入");
             });
             if (!result) return;

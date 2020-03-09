@@ -1,0 +1,63 @@
+// mobile responsive
+#app {
+  .el-menu--collapse .el-menu .el-submenu {
+    min-width: 64px !important;
+  }
+  .sidebar-container {
+    // transition: width 0.28s;
+    width: 256px !important;
+    height: 100%;
+    position: fixed;
+    font-size: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+    & .el-submenu .el-menu-item {
+      min-width: 64px !important;
+    }
+  }
+  // .withoutAnimation {
+  //   .sidebar-container {
+  //     transition: none !important;
+  //   }
+  // }
+  .main-container {
+    min-height: 100%;
+    transition: margin-left 0.28s;
+    margin-left: 256px;
+    position: relative;
+  }
+  .hideSidebar {
+    .sidebar-container {
+      width: 64px !important;
+    }
+    .main-container {
+      margin-left: 64px;
+    }
+  }
+  .mobile {
+    .main-container {
+      margin-left: 0px;
+    }
+    .sidebar-container {
+      transition: transform 0.28s;
+      width: 256px !important;
+    }
+
+    &.hideSidebar {
+      .sidebar-container {
+        pointer-events: none;
+        // transition-duration: 0.3s;
+        transform: translate3d(-256px, 0, 0);
+      }
+    }
+  }
+  .withoutAnimation {
+    .main-container,
+    .sidebar-container {
+      transition: none;
+    }
+  }
+}

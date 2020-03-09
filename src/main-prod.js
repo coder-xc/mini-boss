@@ -3,10 +3,11 @@ import App from './App.vue'
 import MyBread from 'components/MyBread/MyBread.vue'
 import router from './router'
 import store from './vuex/store'
-// import './plugins/element.js'
-import './assets/css/global.css';
+import './styles/index.scss'
 import './assets/css/reset.css';
 import './assets/fonts/iconfont.css'
+
+
 
 
 // 引入富文本编辑器
@@ -21,6 +22,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueQuillEditor)
 Vue.component(MyBread.name, MyBread)
+
 
 new Vue({
   router,

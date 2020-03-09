@@ -4,10 +4,10 @@
     <my-bread />
 
     <!-- 卡片区域 -->
-    <el-card>
+    <el-card class="filter">
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" clearable>
+          <el-input class="input" placeholder="请输入内容" clearable>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-col>

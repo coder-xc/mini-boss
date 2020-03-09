@@ -9,6 +9,7 @@ import goods from './modules/goods';
 import merchant from './modules/merchant';
 import adminUser from './modules/admin-user';
 import user from './modules/user';
+import app from './modules/app'
 
 Vue.use(Vuex);
 
@@ -24,5 +25,6 @@ export default new Vuex.Store({
     merchant,
     adminUser,
     user,
+    app,
   }
 })

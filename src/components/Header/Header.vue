@@ -1,37 +1,48 @@
 <template>
   <el-header style="height:64px;">
-    <div class="time-weather-toggle">
-      <div class="toggle" @click="$store.dispatch('toggleCollapse')">
-        <span class="iconfont" :class="isCollapse ? 'icon-toggle-right' : 'icon-toggle-left'"></span>
-      </div>
-      <span>{{currentTime}}</span>
-      <img :src="dayPictureUrl" alt="weather" />
-      <span>{{weather}}</span>
-    </div>
-    <div class="user">
-      <div class="userinfo">
-        <el-dropdown @command="handleCommand">
-          <i class="el-icon-setting"></i>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="logout" @click="logout">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <span>欢迎你，{{user.username}}</span>
-      </div>
-    </div>
+    <!-- type="flex" justify="space-between" align="middle"  -->
+    <el-row type="flex" justify="space-between" align="middle" style="height:100%">
+      <el-col :xs="24">
+        <div class="time-weather-toggle">
+          <div class="toggle" @click="$store.dispatch('app/toggleSideBar')">
+            <span class="iconfont" :class="isCollapse ? 'icon-toggle-right' : 'icon-toggle-left'"></span>
+          </div>
+          <span>{{currentTime}}</span>
+          <img :src="dayPictureUrl" alt="weather" />
+          <span>{{weather}}</span>
+        </div>
+      </el-col>
+      <el-col :xs="24">
+        <div class="user">
+          <div class="userinfo">
+            <el-dropdown @command="handleCommand">
+              <i class="el-icon-setting"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="logout" @click="logout">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <span>欢迎你，{{user.username}}</span>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
   </el-header>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { formateDate } from "../../utils/dateUtils";
 import { reqWeather } from "../../api";
 export default {
   computed: {
+    ...mapGetters(["sidebar"]),
     ...mapState({
-      user: state => state.adminUser.adminUser,
-      isCollapse: state => state.isCollapseMenu
-    })
+      user: state => state.adminUser.adminUser
+      // isCollapse: state => state.isCollapseMenu
+    }),
+    isCollapse() {
+      return !this.sidebar.opened;
+    }
   },
   data() {
     return {
@@ -91,10 +102,10 @@ export default {
 
 <style lang="scss" scoped>
 .el-header {
-  display: flex;
-  justify-content: space-between;
+  // display: flex;
+  // justify-content: space-between;
   padding-left: 0;
-  align-items: center;
+  // align-items: center;
   color: rgba(0, 0, 0, 0.65);
   font-size: 20px;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
@@ -134,6 +145,7 @@ export default {
 .user {
   .userinfo {
     display: flex;
+    justify-content: flex-end;
     .el-dropdown {
       text-align: right;
       .el-icon-setting {

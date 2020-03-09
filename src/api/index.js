@@ -1,7 +1,6 @@
-import Vue from 'vue'
 import request from '@/utils/request'
 import jsonp from 'jsonp'
-let v = new Vue()
+import { Message } from 'element-ui'
 
 // 发送 jsonp 请求得到天气信息
 export const reqWeather = (city) => {
@@ -15,7 +14,7 @@ export const reqWeather = (city) => {
         const { dayPictureUrl, weather } = data.results[0].weather_data[0]
         resolve({ dayPictureUrl, weather })
       } else { // 失败
-        v.$message.error('获取天气信息失败')
+        Message.error('获取天气信息失败')
       }
     })
   })

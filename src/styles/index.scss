@@ -1,3 +1,9 @@
+@import '@/styles/siderbar.scss';
+@import '@/styles/header.scss';
+@import '@/styles/filter-area.scss';
+
+
+/* 全局公共样式 */
 #app,body,html {
   color: rgba(0, 0, 0, 0.65);
 }
@@ -18,4 +24,3 @@
 .ql-editor {
   min-height: 300px;
 }
-

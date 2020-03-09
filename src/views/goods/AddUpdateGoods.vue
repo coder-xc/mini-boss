@@ -245,7 +245,6 @@ export default {
   },
 
   created() {
-    console.log(this.services)
     if (!this.services) this.$store.dispatch("getGoodsService", {});
     this.getCategories();
     const { type } = this.$route.params;

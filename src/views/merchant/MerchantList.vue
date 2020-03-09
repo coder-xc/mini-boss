@@ -3,24 +3,24 @@
     <!-- 头部面包屑区域 -->
     <my-bread />
     <!-- 卡片区域 -->
-    <el-card>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input placeholder="请输入内容" clearable>
+    <el-card class="filter">
+      <el-row>
+        <el-col class="input" :xs="24" :md="7">
+          <el-input v-model="searchName" placeholder="请输入店铺名称" clearable>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-col>
-        <el-col :span="3">
+        <el-col class="search" :xs="8" :md="3">
           <el-button type="primary">查询</el-button>
         </el-col>
-        <el-col :span="2">
+        <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddShopDialog">添加店铺</el-button>
         </el-col>
       </el-row>
 
       <!-- 表格数据渲染区域 -->
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="merchantList" stripe border>
-        <el-table-column align="center" type="selection" width="55"></el-table-column>
+        <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="name" label="店铺名称"></el-table-column>
         <el-table-column align="center" prop="logo" label="店铺图标" width="120">
@@ -199,6 +199,7 @@ export default {
   data() {
     return {
       loading: true,
+      searchName: '',
       isShowDialog: false,
       isUpdate: false,
       shopForm: {
@@ -435,14 +436,18 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(async () => {
-        await reqDelMerchant(merchant);
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
-        this.$store.dispatch("getMerchants").then(() => (this.loading = false));
-      });
+      })
+        .then(async () => {
+          await reqDelMerchant(merchant);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+          this.$store
+            .dispatch("getMerchants")
+            .then(() => (this.loading = false));
+        })
+        .catch(() => {});
     }
   }
 };

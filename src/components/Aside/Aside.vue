@@ -1,5 +1,5 @@
 <template>
-  <el-aside :width="isCollapse ? '80px' : '256px'">
+  <el-aside>
     <div class="header">
       <img src="../../assets/logo.png" alt />
       <h1 v-show="!isCollapse">商城后台管理系统</h1>
@@ -13,6 +13,7 @@
       :collapse-transition="false"
       router
       :default-active="currentPath"
+      @select="menuSelect"
     >
       <!-- 二级菜单 -->
       <el-submenu index="1">
@@ -131,7 +132,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -140,8 +141,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["sidebar"]),
     ...mapState({
-      isCollapse: state => state.isCollapseMenu
+      device: state => state.app.device,
     }),
     currentPath() {
       // 得到当前请求的路由路径
@@ -161,13 +163,21 @@ export default {
         selectKey = "/category/categorylist";
       }
       return selectKey;
+    },
+    isCollapse() {
+      return !this.sidebar.opened;
     }
   },
+
   methods: {
     toggleCollapse() {
-      this.isCollapse = !this.isCollapse;
+      this.$store.dispatch("app/toggleSideBar");
     },
-    logout() {}
+    menuSelect() {
+      if (this.device === "mobile") {
+        this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
+      }
+    }
   }
 };
 </script>
@@ -188,11 +198,40 @@ export default {
     height: 32px;
   }
 }
-.el-aside {
+.sidebar-container {
+  // width: 256px !important;
   background-color: #001529;
+  // transform: translate(-256px, 0);
+  transition: transform 0.28s;
+  .drawer-bg {
+    background: #000;
+    opacity: 0.3;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    position: absolute;
+    z-index: 999;
+  }
+
   .el-menu {
     border-right: none;
   }
+}
+.mobile {
+  transform: none;
+  height: 100%;
+  position: fixed;
+  font-size: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1001;
+  overflow: hidden;
+  transform: none;
+}
+.desktop {
+  transform: none;
+  position: unset;
 }
 
 .toggle-button {
