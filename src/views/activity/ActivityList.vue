@@ -64,7 +64,7 @@
       </div>
     </el-card>
     <!-- 添加/修改分类对话框 -->
-    <el-dialog title="添加活动" :visible.sync="isShowDialog" :lock-scroll="false" @close="dialogClose">
+    <el-dialog :title="isUpdate ? '修改活动' : '添加活动'" :visible.sync="isShowDialog" :lock-scroll="false" @close="dialogClose">
       <el-form ref="form" :model="activeForm" :rules="activeFormRules" label-width="80px">
         <el-form-item label="活动名称" prop="title">
           <el-input v-model="activeForm.title" placeholder="请选择"></el-input>
