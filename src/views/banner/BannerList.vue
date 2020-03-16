@@ -6,14 +6,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入轮播图标题" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input
+            v-model="searchQuery.where.title.$regex"
+            placeholder="请输入轮播图标题"
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getBanners"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getBanners"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getBanners">查询</el-button>
+        </el-col>-->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddBannerDialog">添加轮播图</el-button>
         </el-col>
@@ -49,20 +55,16 @@
       </el-table>
 
       <!-- 分页区域 -->
-      <!-- <el-row> -->
-        <!-- <el-col :xs="24" :md="7"> -->
-          <div style="text-align:right">
-            <el-pagination
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              background
-              :page-sizes="pageSize"
-              @size-change="sizeChange"
-              @current-change="pageChange"
-            ></el-pagination>
-          </div>
-        <!-- </el-col> -->
-      <!-- </el-row> -->
+      <div style="text-align:right">
+        <el-pagination
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          background
+          :page-sizes="pageSize"
+          @size-change="sizeChange"
+          @current-change="pageChange"
+        ></el-pagination>
+      </div>
     </el-card>
 
     <!-- 添加轮播图对话框区域 -->
@@ -114,8 +116,8 @@
     </el-dialog>
 
     <!-- 图片预览区域 -->
-    <el-dialog :visible.sync="previewVisible">
-      <img width="100%" :src="previewPath" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" alt />
     </el-dialog>
   </div>
 </template>
@@ -127,7 +129,6 @@ export default {
   data() {
     return {
       loading: true,
-      searchName: '',
       bannerList: [],
       total: 0,
       isShowDialog: false,
@@ -142,7 +143,7 @@ export default {
         index: [{ required: true, message: "请选择权重", trigger: "blur" }]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { title: { $regex: "" } } },
       fileList: [],
       isUpdate: false,
       previewPath: "",
@@ -311,6 +312,9 @@ export default {
       this.fileList.splice(i, 1);
       this.addBannerForm.url = "";
       this.$refs.form.validateField("img");
+    },
+    clearSearch() {
+      this.getBanners();
     }
   }
 };
@@ -318,7 +322,4 @@ export default {
 
 
 <style lang="scss" scoped>
-/deep/ .el-upload-list__item {
-  transition: none !important;
-}
 </style>

@@ -13,7 +13,7 @@
     bottom: 0;
     left: 0;
     z-index: 1001;
-    overflow: hidden;
+    // overflow: hidden;
     & .el-submenu .el-menu-item {
       min-width: 64px !important;
     }
@@ -54,10 +54,27 @@
       }
     }
   }
+
   .withoutAnimation {
     .main-container,
     .sidebar-container {
       transition: none;
+    }
+  }
+
+  .hideSidebar {
+    .sidebar-container {
+      .el-menu-item.is-active {
+        color: rgb(64, 158, 255) !important;
+        background-color: rgb(0, 21, 41) !important;
+      }
+    }
+  }
+
+  .openSidebar {
+    .el-menu-item.is-active {
+      background-color: #409eff !important;
+      color: #fff !important;
     }
   }
 }

@@ -3,9 +3,15 @@ import request from '@/utils/request'
 /**
  * 获取订单列表
  */
-export const reqOrders = (query) => request({
-  url: `/orders?query=${JSON.stringify(query)}`
-})
+export const reqOrders = (query) => {
+  const params = JSON.parse(JSON.stringify(query))
+  if(!params.where.orderNum.$regex) {
+    delete params.where
+  }
+  return request({
+    url: `/orders?query=${JSON.stringify(params)}`
+  })
+}
 
 /**
  * 添加/修改订单

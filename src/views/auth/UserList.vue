@@ -5,23 +5,30 @@
 
     <!-- 卡片区域 -->
     <el-card class="filter">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input class="input" placeholder="请输入内容" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-row>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input
+            class="input"
+            v-model="searchQuery.where.username.$regex"
+            placeholder="请输入用户名"
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getUserList"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
           </el-input>
         </el-col>
-        <el-col :span="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
-        <el-col :span="2">
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getUserList">查询</el-button>
+        </el-col> -->
+        <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddUserDialog">添加用户</el-button>
         </el-col>
       </el-row>
 
       <!-- 表格数据渲染区域 -->
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="userList" stripe border>
-        <el-table-column align="center" type="selection" width="55"></el-table-column>
+        <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="username" label="用户名" width="200"></el-table-column>
         <el-table-column align="center" prop="createdAt" label="创建时间">
@@ -102,7 +109,7 @@ export default {
         password: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { username: { $regex: "" } } },
       isShowDialog: false,
       isUpdate: false
     };
@@ -147,7 +154,7 @@ export default {
       this.searchQuery.limit = size;
       this.getUserList();
     },
-    
+
     /**
      * 页码改变时触发
      */
@@ -165,20 +172,24 @@ export default {
     /**
      * 对话框点击确定按钮: 添加/修改用户
      */
-    async addOrUpdateUser() {
-      if (!this.isUpdate) {
-        // 添加
-        await addUser(this.addUserForm);
-      } else {
-        // 修改
-        await updateUser(this.addUserForm);
-      }
-      this.$message({
-        message: `${this.isUpdate ? "修改成功!" : "添加成功!"}`,
-        type: "success"
+    addOrUpdateUser() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          if (!this.isUpdate) {
+            // 添加
+            await addUser(this.addUserForm);
+          } else {
+            // 修改
+            await updateUser(this.addUserForm);
+          }
+          this.$message({
+            message: `${this.isUpdate ? "修改成功!" : "添加成功!"}`,
+            type: "success"
+          });
+          this.$store.dispatch("getUserList", this.searchQuery);
+          this.isShowDialog = false;
+        }
       });
-      this.$store.dispatch("getUserList", this.searchQuery);
-      this.isShowDialog = false;
     },
     /**
      * 对话框关闭后清空表单
@@ -220,6 +231,10 @@ export default {
           this.$store.dispatch("getUserList");
         })
         .catch(() => {});
+    },
+
+    clearSearch() {
+      this.getUserList()
     }
   }
 };

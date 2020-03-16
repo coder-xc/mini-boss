@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  // publicPath: '/shopadmin', // 生产环境打包设置
+  publicPath: '/shopadmin', // 生产环境打包设置
   /* 编写webpack支持的配置 */
   configureWebpack: {
     resolve: {

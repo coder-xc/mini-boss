@@ -15,7 +15,8 @@ import storageUtils from '@/utils/storageUtils'
 const state = {
   token: storageUtils.getToken(), // 登录token标识,
   adminUser: {},
-  adminUserList: null
+  adminUserList: null,
+  adminUserListTotal: 0
 }
 /**
  * 包含同步action和异步action
@@ -34,8 +35,8 @@ const actions = {
     commit(LOGOUT)
   },
   async getUserList({ commit }, query) {
-    const userList = await getAdminUser(query)
-    commit(RECEIVE_USER_LIST, { userList })
+    const result = await getAdminUser(query)
+    commit(RECEIVE_USER_LIST, result)
   },
 }
 
@@ -50,8 +51,9 @@ const mutations = {
     state.token = ''
     state.adminUser = {}
   },
-  [RECEIVE_USER_LIST](state, { userList }) {
-    state.adminUserList = userList
+  [RECEIVE_USER_LIST](state, { data, total }) {
+    state.adminUserList = data;
+    state.adminUserListTotal = total;
   },
 }
 

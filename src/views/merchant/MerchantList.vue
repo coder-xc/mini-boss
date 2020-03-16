@@ -5,14 +5,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入店铺名称" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input
+            v-model="searchQuery.where.name.$regex"
+            placeholder="请输入店铺名称"
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getMerchant"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getMerchant"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getMerchant">查询</el-button>
+        </el-col>-->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddShopDialog">添加店铺</el-button>
         </el-col>
@@ -84,7 +90,6 @@
       :title="this.isUpdate ? '修改店铺' : '添加店铺'"
       :visible.sync="isShowDialog"
       :lock-scroll="false"
-      width="700px"
       @close="dialogClose"
     >
       <el-form ref="form" :model="shopForm" :rules="shopFormRules" label-width="80px">
@@ -177,8 +182,8 @@
       </span>
     </el-dialog>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="600px">
-      <img :src="previewPath" width="400" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" />
     </el-dialog>
   </div>
 </template>
@@ -199,7 +204,7 @@ export default {
   data() {
     return {
       loading: true,
-      searchName: '',
+      searchName: "",
       isShowDialog: false,
       isUpdate: false,
       shopForm: {
@@ -233,7 +238,7 @@ export default {
         ]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { name: { $regex: "" } } },
       fileList: [],
       previewPath: "",
       previewVisible: false
@@ -448,6 +453,9 @@ export default {
             .then(() => (this.loading = false));
         })
         .catch(() => {});
+    },
+    clearSearch() {
+      this.getMerchant();
     }
   }
 };
@@ -460,9 +468,6 @@ export default {
   /deep/ .el-form-item__content {
     margin-left: 0 !important;
   }
-}
-/deep/ .el-upload-list__item {
-  transition: none !important;
 }
 </style>
 

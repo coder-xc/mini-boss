@@ -63,7 +63,8 @@ instance.interceptors.response.use(
         return;
       }
       // 提示错误, 并且跳转到登录页
-      Message.error(error.message)
+      Message.error('没有授权, 请重新登录', error.message)
+      store.dispatch('logout')
       router.replace('/login')
     } else {
       // 2. 发了请求, 但账号密码错误
@@ -71,15 +72,15 @@ instance.interceptors.response.use(
       if (error.response.status === 401) {
         // 3. 发了请求, 但token失效了
         store.dispatch('logout')
-        if (router.currentRoute.path !== '/login') {
-          Message.error('授权失败，请重新登录!')
-          router.replace('/login')
-        }
+        Message.error('授权失败，请重新登录，错误码：' + error.response.status)
+        router.replace('/login')
       } else if (error.response.status === 404) {
         // 4. 发了请求, 资源不存在404
-        Message.error('您请求的资源不存在!')
+        Message.error('您请求的资源不存在，错误码：' + error.response.status)
+      } else if (error.response.status === 500) {
+        Message.error('服务器内部错误，错误码：' + error.response.status)
       } else {
-        Message.error('请求错误，请检查网络后重试!')
+        Message.error('请求错误，请检查网络后重试，错误码：' + error.response.status)
       }
     }
     return new Promise(() => { }) // 返回一个pedding状态的promise

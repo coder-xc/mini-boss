@@ -5,14 +5,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入活动名称" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input 
+            v-model="searchQuery.where.title.$regex" 
+            placeholder="请输入活动名称" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getActive"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getActive"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getActive">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddActiveDialog">添加活动</el-button>
         </el-col>
@@ -64,7 +70,12 @@
       </div>
     </el-card>
     <!-- 添加/修改分类对话框 -->
-    <el-dialog :title="isUpdate ? '修改活动' : '添加活动'" :visible.sync="isShowDialog" :lock-scroll="false" @close="dialogClose">
+    <el-dialog
+      :title="isUpdate ? '修改活动' : '添加活动'"
+      :visible.sync="isShowDialog"
+      :lock-scroll="false"
+      @close="dialogClose"
+    >
       <el-form ref="form" :model="activeForm" :rules="activeFormRules" label-width="80px">
         <el-form-item label="活动名称" prop="title">
           <el-input v-model="activeForm.title" placeholder="请选择"></el-input>
@@ -78,9 +89,10 @@
             :limit="1"
             :on-change="handleChange"
             :on-remove="handleRemove"
+            :on-preview="handlePreview"
           >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
           </el-upload>
         </el-form-item>
       </el-form>
@@ -90,8 +102,8 @@
       </span>
     </el-dialog>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
-      <img :src="previewPath" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" alt />
     </el-dialog>
   </div>
 </template>
@@ -111,7 +123,6 @@ export default {
   data() {
     return {
       loading: true,
-      searchName:'',
       activeForm: {
         title: "",
         icon: ""
@@ -121,7 +132,7 @@ export default {
         icon: [{ required: true, message: "请添加图片", trigger: "change" }]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { title: { $regex: "" } } },
       fileList: [], // 上传图片的列表
       previewPath: "", // 预览的图片地址
       previewVisible: false, // 是否显示预览图片
@@ -209,6 +220,13 @@ export default {
       });
     },
     /**
+     * 图片预览
+     */
+    handlePreview(file) {
+      this.previewPath = file.url;
+      this.previewVisible = true;
+    },
+    /**
      * 点击修改按钮: 打开修改对话框
      */
     updateActive(active) {
@@ -248,6 +266,10 @@ export default {
           this.$store.dispatch("getActiveList");
         })
         .catch(() => {});
+    },
+
+    clearSearch() {
+      this.getActive()
     }
   }
 };

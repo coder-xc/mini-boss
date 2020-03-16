@@ -5,14 +5,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入订单编号" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="12">
+          <el-input 
+            v-model="searchQuery.where.orderNum.$regex" 
+            placeholder="请输入订单编号" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getOrder"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getOrder"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getOrder">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddOrderDialog">添加订单</el-button>
         </el-col>
@@ -22,7 +28,7 @@
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="orderList" stripe border>
         <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
-        <el-table-column align="center" prop="_id" label="订单编号" min-width="200"></el-table-column>
+        <el-table-column align="center" prop="orderNum" label="订单编号" min-width="200"></el-table-column>
         <el-table-column align="center" prop="username" label="用户名" min-width="150">
           <template v-slot:default="slotProps">
             <span>{{slotProps.row.user.username}}</span>
@@ -87,13 +93,12 @@
       title="查看商品"
       :visible.sync="isShowShopDialog"
       :lock-scroll="false"
-      width="600px"
     >
       <el-card v-if="orderDetail">
         <div slot="header" class="clearfix">
           <span>
             订单编号：
-            <span>{{orderDetail._id}}</span>
+            <span>{{orderDetail.orderNum}}</span>
           </span>
           <span style="float: right; padding: 3px 0">创建时间：{{orderDetail.createdAt | formateDate}}</span>
         </div>
@@ -172,13 +177,12 @@ export default {
   data() {
     return {
       loading: true, // loading状态
-      searchName: '',
       isShowShopDialog: false, // 是否显示查看商品对话框
       orderDetail: null, // 查看商品时对应的商品数据
       isUpdate: false, // 是否更新订单
       isShowAddUpdateDialog: false, // 是否显示添加/修改订单对话框
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { orderNum: { $regex: "" } } },
       orderForm: {
         // 添加/修改订单的Form表单数据
         commoditis: [],
@@ -319,6 +323,10 @@ export default {
           this.$store.dispatch("getOrders").then(() => (this.loading = false));
         })
         .catch(() => {});
+    },
+
+    clearSearch() {
+      this.getOrder()
     }
   }
 };

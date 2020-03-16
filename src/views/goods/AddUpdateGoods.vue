@@ -179,6 +179,10 @@
         <el-button type="primary" native-type="submit">保存</el-button>
       </el-form-item>
     </el-form>
+    <!-- 图片预览 -->
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" alt />
+    </el-dialog>
   </div>
 </template>
 
@@ -226,6 +230,8 @@ export default {
         service: { required: true, message: "请选择商品服务", trigger: "blur" }
       },
       fileList: [],
+      previewPath: '',
+      previewVisible: false,
       content: "",
       //为attribute 提供的空值, 防止 新增时 get 不到需要的属性
       demoItem: {
@@ -417,9 +423,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .el-upload-list__item {
-  transition: none !important;
-}
 </style>
 
 

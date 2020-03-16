@@ -20,7 +20,7 @@ VueRouter.prototype.replace = function replace(location) {
 const router = new VueRouter({
   mode: 'history',
   routes,
-  // base: '/shopadmin/', // 生产环境打包设置
+  base: '/shopadmin/', // 生产环境打包设置
 })
 
 router.beforeEach((to, from, next) => {

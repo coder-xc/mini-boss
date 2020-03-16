@@ -5,14 +5,26 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
+        <el-col class="input" :xs="24" :md="6">
+          <el-select style="width:100%" v-model="searchType">
+            <el-option label="按服务名称" value="name"></el-option>
+            <el-option label="按服务内容" value="message"></el-option>
+          </el-select>
+        </el-col>
         <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入商品服务名称" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input 
+            v-model="inputVal" 
+            :placeholder="placeholder" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getGoodsService"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getGoodsService"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getGoodsService">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddServiceDialog">添加服务</el-button>
         </el-col>
@@ -87,7 +99,7 @@
             :on-exceed="handleExceed"
           >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
           </el-upload>
         </el-form-item>
       </el-form>
@@ -97,8 +109,8 @@
       </span>
     </el-dialog>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="600px">
-      <img :src="previewPath" width="400" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" />
     </el-dialog>
   </div>
 </template>
@@ -110,9 +122,7 @@ import { reqAddUpdateGoodsService, reqDelGoodsService } from "api/goods";
 export default {
   data() {
     return {
-      searchName: '',
-      // services: [], // 服务列表数据
-      // total: 0, // 服务数据总数
+      searchName: "",
       servicesForm: {
         // form表单
         name: "",
@@ -128,7 +138,14 @@ export default {
         icon: [{ required: true, message: "请添加服务图标", trigger: "blur" }]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchType: "name", // 搜索类型
+      placeholder: "按服务名称",
+      searchQuery: {
+        // 分页以及搜索的参数对象
+        limit: 10,
+        page: 1,
+        where: { name: { $regex: "" }, message: { $regex: "" } }
+      },
       fileList: [], // 上传的文件列表
       previewVisible: false, // 是否显示预览图片对话框
       previewPath: "", // 预览的图片地址
@@ -139,11 +156,50 @@ export default {
   created() {
     this.getGoodsService();
   },
+
+  watch: {
+    /**
+     * 监听searchType（下拉框）的变化
+     */
+    searchType(val) {
+      if (val === "name") {
+        // 修改输入框placeholder
+        this.placeholder = "按服务名称";
+        // 把两个参数的值进行交换
+        this.searchQuery.where.name.$regex = this.searchQuery.where.message.$regex;
+        // 把对方参数的值清空
+        this.searchQuery.where.message.$regex = "";
+      } else if (val === "message") {
+        // 修改输入框placeholder
+        this.placeholder = "按服务内容";
+        // 把两个参数的值进行交换
+        this.searchQuery.where.message.$regex = this.searchQuery.where.name.$regex;
+        // 把对方参数的值清空
+        this.searchQuery.where.name.$regex = "";
+      }
+    }
+  },
   computed: {
     ...mapState({
       services: state => state.goods.goodsService,
       total: state => state.goods.servicesTotal
-    })
+    }),
+    inputVal: {
+      set(val) {
+        if (this.searchType === "name") {
+          this.searchQuery.where.name.$regex = val;
+        } else {
+          this.searchQuery.where.message.$regex = val;
+        }
+      },
+      get() {
+        if (this.searchType === "name") {
+          return this.searchQuery.where.name.$regex;
+        } else {
+          return this.searchQuery.where.message.$regex;
+        }
+      }
+    }
   },
   methods: {
     getGoodsService() {
@@ -293,16 +349,10 @@ export default {
           this.$store.dispatch("getGoodsService", this.searchQuery);
         }
       });
+    },
+    clearSearch() {
+      this.getGoodsService();
     }
   }
 };
 </script>
-
-
-<style lang="scss" scoped>
-/deep/ .el-upload-list__item {
-  transition: none !important;
-}
-</style>
-
-

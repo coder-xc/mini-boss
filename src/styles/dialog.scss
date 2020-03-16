@@ -1,0 +1,13 @@
+#app {
+  .mobile {
+    .el-dialog {
+      width: 350px;
+    }
+  }
+  .el-dialog {
+    width: 650px;
+    .pre-img {
+      width: 100%;
+    }
+  }
+}

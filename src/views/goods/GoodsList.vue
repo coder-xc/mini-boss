@@ -5,14 +5,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入商品名称" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input 
+            v-model="searchQuery.where.title.$regex" 
+            placeholder="请输入商品名称" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getGoods"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getGoods"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getGoods">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="addGoods">添加商品</el-button>
         </el-col>
@@ -73,9 +79,8 @@ export default {
   data() {
     return {
       loading: true,
-      searchName: '',
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 }
+      searchQuery: { limit: 10, page: 1, where: { title: { $regex: "" } } }
     };
   },
   computed: {
@@ -137,6 +142,9 @@ export default {
           this.$store.dispatch("getGoods");
         })
         .catch(() => {});
+    },
+    clearSearch() {
+      this.getGoods()
     }
   }
 };

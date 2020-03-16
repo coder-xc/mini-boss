@@ -16,17 +16,18 @@
       @select="menuSelect"
     >
       <!-- 二级菜单 -->
-      <el-submenu index="1">
+      <!-- <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-s-home"></i>
           <span>首页</span>
-        </template>
+        </template> -->
         <el-menu-item index="/home" style="background-color:#001529">
-          <template slot="title">
-            <span>首页</span>
-          </template>
+          <!-- <template slot="title"> -->
+            <i class="el-icon-s-home"></i>
+            <span slot="title">首页</span>
+          <!-- </template> -->
         </el-menu-item>
-      </el-submenu>
+      <!-- </el-submenu> -->
       <!-- 一级菜单 -->
       <el-submenu index="2">
         <template slot="title">

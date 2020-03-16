@@ -4,14 +4,21 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" type="text" placeholder="请输入评论内容" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input 
+            v-model="searchQuery.where.message.$regex" 
+            type="text" 
+            placeholder="请输入评论内容" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getComment"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getComment"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getComment">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddCommentDialog">添加评论</el-button>
         </el-col>
@@ -19,7 +26,7 @@
 
       <!-- 表格数据渲染区域 -->
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="commentList" stripe border>
-        <el-table-column align="center" type="selection" width="55"></el-table-column>
+        <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="message" label="评论内容" min-width="200"></el-table-column>
         <el-table-column align="center" prop="images" label="评论图片" min-width="150">
@@ -67,17 +74,11 @@
     </el-card>
 
     <!-- 查看图片的对话框 -->
-    <el-dialog
-      class="shop"
-      title="查看图片"
-      :visible.sync="isShowImgDialog"
-      :lock-scroll="false"
-      style="min-width:600px"
-    >
+    <el-dialog class="shop" title="查看图片" :visible.sync="isShowImgDialog" :lock-scroll="false">
       <el-row type="flex" justify="space-between" align="center" style="flex-wrap: wrap;">
         <el-col v-for="(item, index) in images" :key="index" :sm="12" :xs="12" :md="12">
           <div style="text-align:center;margin-bottom:20px">
-            <img :src="item" alt style="width:200px;height:200px;" />
+            <img :src="item" alt style="width:50%" />
           </div>
         </el-col>
       </el-row>
@@ -123,7 +124,6 @@
             :limit="9"
             :file-list="fileList"
             :on-exceed="handleExceed"
-            :on-remove="handleRemove"
             multiple
           >
             <i slot="default" class="el-icon-plus"></i>
@@ -147,8 +147,8 @@
       </span>
     </el-dialog>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="600px">
-      <img :src="previewPath" width="400" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" alt />
     </el-dialog>
   </div>
 </template>
@@ -171,7 +171,6 @@ export default {
 
   data() {
     return {
-      searchName: '',
       loading: false,
       isShowImgDialog: false,
       isUpdate: false,
@@ -192,7 +191,7 @@ export default {
         // images: [{ required: true, message: "请上传评论图片", trigger: "blur" }]
       },
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 },
+      searchQuery: { limit: 10, page: 1, where: { message: { $regex: "" } } },
       fileList: [],
       previewPath: "",
       previewVisible: false
@@ -315,10 +314,12 @@ export default {
      * 移除已上传的图片
      */
     handleRemove(file) {
-      this._axiosPromiseArr.forEach(cancel => {
-        cancel({ msg: "图片已停止上传", code: 600 });
-      });
-      this.imgLoading.close();
+      if (this.imgLoading) {
+        this._axiosPromiseArr.forEach(cancel => {
+          cancel({ msg: "图片已停止上传", code: 600 });
+        });
+        this.imgLoading.close();
+      }
       const uid = file.uid;
       const i = this.fileList.findIndex(file => file.uid === uid);
       this.fileList.splice(i, 1);
@@ -369,13 +370,14 @@ export default {
             .then(() => (this.loading = false));
         })
         .catch(() => {});
+    },
+
+    clearSearch() {
+      this.getComment()
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-/deep/ .el-upload-list__item {
-  transition: none !important;
-}
 </style>

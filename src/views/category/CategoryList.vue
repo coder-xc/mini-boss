@@ -6,14 +6,20 @@
     <!-- 卡片区域 -->
     <el-card class="filter">
       <el-row>
-        <el-col class="input" :xs="24" :md="7">
-          <el-input v-model="searchName" placeholder="请输入分类名称" clearable>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-col class="input" :xs="24" :md="8">
+          <el-input 
+            v-model="searchQuery.where.name.$regex" 
+            placeholder="请输入分类名称" 
+            clearable
+            @clear="clearSearch"
+            @keyup.enter.native="getCategoryList"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getCategoryList"></el-button>
           </el-input>
         </el-col>
-        <el-col class="search" :xs="8" :md="3">
-          <el-button type="primary">查询</el-button>
-        </el-col>
+        <!-- <el-col class="search" :xs="8" :md="3">
+          <el-button type="primary" @click="getCategoryList">查询</el-button>
+        </el-col> -->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddCategory">添加分类</el-button>
         </el-col>
@@ -21,7 +27,7 @@
 
       <!-- 表格数据渲染区域 -->
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="categoryList" stripe border>
-        <el-table-column align="center" type="selection" width="55"></el-table-column>
+        <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
         <el-table-column align="center" prop="name" label="分类名称"></el-table-column>
         <el-table-column align="center" label="分类级别">
@@ -81,10 +87,9 @@ export default {
   data() {
     return {
       loading: true,
-      searchName: '',
       parentCategoryList: [], // 一级分类
       pageSize: [5, 10, 15, 20],
-      searchQuery: { limit: 10, page: 1 }
+      searchQuery: { limit: 10, page: 1, where: { name: { $regex: "" } } }
     };
   },
 
@@ -175,6 +180,9 @@ export default {
           this.getCategoryList();
         })
         .catch(() => {});
+    },
+    clearSearch() {
+      this.getCategoryList()
     }
   }
 };

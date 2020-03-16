@@ -46,7 +46,7 @@
               :on-exceed="handleExceed"
             >
               <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
             </el-upload>
           </el-form-item>
         </el-tab-pane>
@@ -152,8 +152,8 @@
       </el-form-item>
     </el-form>
     <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="600px">
-      <img :src="previewPath" width="400" alt />
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img class="pre-img" :src="previewPath" alt />
     </el-dialog>
   </div>
 </template>
