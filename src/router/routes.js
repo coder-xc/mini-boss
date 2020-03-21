@@ -9,6 +9,7 @@ const Acitve = () => import('views/activity/Activity');
 const AcitveList = () => import('views/activity/ActivityList');
 const Auth = () => import('views/auth/Auth');
 const UserList = () => import('views/auth/UserList');
+const RoleList = () => import('views/auth/RoleList');
 const AddCategory = () => import('views/category/AddCategory');
 const GoodsList = () => import('views/goods/GoodsList');
 const Detail = () => import('views/goods/Detail');
@@ -75,11 +76,19 @@ export default [
         component: Auth,
         redirect: '/auth/userlist',
         meta: { title: '权限管理' },
-        children: [{
-          path: '/auth/userlist',
-          component: UserList,
-          meta: { title: '用户管理' },
-        }]
+        children: [
+          {
+            path: '/auth/userlist',
+            component: UserList,
+            meta: { title: '用户管理' },
+          },
+          {
+            path: '/auth/rolelist',
+            component: RoleList,
+            meta: { title: '角色管理' },
+          },
+          
+        ]
       },
       {
         path: '/active',

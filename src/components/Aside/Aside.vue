@@ -15,126 +15,17 @@
       :default-active="currentPath"
       @select="menuSelect"
     >
-      <!-- 二级菜单 -->
-      <!-- <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-s-home"></i>
-          <span>首页</span>
-        </template> -->
-        <el-menu-item index="/home" style="background-color:#001529">
-          <!-- <template slot="title"> -->
-            <i class="el-icon-s-home"></i>
-            <span slot="title">首页</span>
-          <!-- </template> -->
-        </el-menu-item>
-      <!-- </el-submenu> -->
-      <!-- 一级菜单 -->
-      <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-picture"></i>
-          <span>轮播图</span>
-        </template>
-        <el-menu-item index="/banner/bannerlist">
-          <template slot="title">
-            <i class="el-icon-picture"></i>
-            <span>首页轮播图</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-leimupinleifenleileibie"></i>
-          <span>分类管理</span>
-        </template>
-        <el-menu-item index="/category/categorylist">
-          <template slot="title">
-            <span>分类列表</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="4">
-        <template slot="title">
-          <i class="el-icon-goods"></i>
-          <span>商品管理</span>
-        </template>
-        <el-menu-item index="/goods/goodslist">
-          <template slot="title">
-            <span>商品列表</span>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="/goods/goodsservice">
-          <template slot="title">
-            <span>商品服务</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="5">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-shangjia"></i>
-          <span>商家管理</span>
-        </template>
-        <el-menu-item index="/merchant/merchantlist">
-          <template slot="title">
-            <span>店铺列表</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="6">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-quanxianguanli"></i>
-          <span>权限管理</span>
-        </template>
-        <el-menu-item index="/auth/userlist">
-          <template slot="title">
-            <span>用户管理</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-
-      <el-submenu index="7">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-huodong"></i>
-          <span>活动管理</span>
-        </template>
-        <el-menu-item index="/active/activelist">
-          <template slot="title">
-            <span>首页活动</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-      <el-submenu index="8">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-dingdanguanli"></i>
-          <span>订单管理</span>
-        </template>
-        <el-menu-item index="/order/orderlist">
-          <template slot="title">
-            <span>订单列表</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
-      <el-submenu index="9">
-        <template slot="title">
-          <i class="el-icon- iconfont icon-ziyuan"></i>
-          <span>评论管理</span>
-        </template>
-        <el-menu-item index="/comment/commentlist">
-          <template slot="title">
-            <span>评论列表</span>
-          </template>
-        </el-menu-item>
-      </el-submenu>
+      <Item :menus="menus" />
     </el-menu>
   </el-aside>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import Item from "./Item";
+import menuList from "@/config/menuConfig";
 export default {
+  components: { Item },
   data() {
     return {
       // 是否折叠
@@ -145,6 +36,7 @@ export default {
     ...mapGetters(["sidebar"]),
     ...mapState({
       device: state => state.app.device,
+      menus: state => state.adminUser.menus
     }),
     currentPath() {
       // 得到当前请求的路由路径
@@ -169,6 +61,11 @@ export default {
       return !this.sidebar.opened;
     }
   },
+  
+  created() {
+    
+    this.$store.dispatch("saveUser");
+  },
 
   methods: {
     toggleCollapse() {
@@ -178,6 +75,13 @@ export default {
       if (this.device === "mobile") {
         this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
       }
+    },
+    currentAuth() {
+      menuList.forEach(menu => {
+        if (!this.menus.find(item => menu.key === item)) {
+          // delete
+        }
+      });
     }
   }
 };

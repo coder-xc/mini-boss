@@ -10,6 +10,7 @@ import merchant from './modules/merchant';
 import adminUser from './modules/admin-user';
 import user from './modules/user';
 import app from './modules/app'
+import permission from './modules/permission'
 
 Vue.use(Vuex);
 
@@ -26,5 +27,6 @@ export default new Vuex.Store({
     adminUser,
     user,
     app,
+    permission
   }
 })
