@@ -13,3 +13,5 @@ export const RECEIVE_MERCHANTS = 'receive_merchants';
 export const RECEIVE_ORDERS = 'receive_orders';
 export const RECEIVE_BACK_ROUTE_PATH = 'receive_back_route_path'
 export const RECEIVE_COMMENTS = 'receive_comments';
+export const PERMISSION_MAPPING_VIEW = 'permission_mapping_view';
+export const RECEIVE_ROLE_LIST = 'receive_role_list';

@@ -48,12 +48,14 @@ export const addUser = ({ username, password }) => request({
 /**
  * 修改用户
  */
-export const updateUser = ({ username, password, _id }) => request({
+export const updateUser = ({ username, password, roles, permission, _id }) => request({
   url: `/auth/users/${_id}`,
   method: 'PUT',
   data: {
     username,
-    password
+    password,
+    roles,
+    permission
   },
   headers: {
     checkToken: true
@@ -69,4 +71,33 @@ export const delUser = ({ _id }) => request({
   headers: {
     checkToken: true
   }
+})
+
+/**
+ * 获取角色列表
+ */
+export const reqRoles = (query) => request({
+  url: `/roles?query=${JSON.stringify(query)}`
+})
+
+/**
+ * 添加角色
+ */
+export const reqAddRole = ({ name, description, status, permission, _id }) => request({
+  url: `/roles${_id ? `/${_id}` : ''}`,
+  method: `${_id ? 'PUT' : 'POST'}`,
+  data: {
+    name,
+    description,
+    status,
+    permission
+  }
+})
+
+/**
+ * 删除角色
+ */
+export const reqDelRole = ({ _id }) => request({
+  url: `/roles/${_id}`,
+  method: 'DELETE',
 })

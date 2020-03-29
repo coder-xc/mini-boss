@@ -3,11 +3,13 @@ import {
   RECEIVE_TOKEN,
   LOGOUT,
   RECEIVE_USER_LIST,
+  RECEIVE_ROLE_LIST
 } from '../mutation-types'
 
 import {
   getAdminUser,
   getUserInfo,
+  reqRoles
 } from 'api/user'
 
 import storageUtils from '@/utils/storageUtils'
@@ -18,6 +20,8 @@ const state = {
   adminUserList: null,
   adminUserListTotal: 0,
   menus: [],
+  roleList: null,
+  roleTotal: 0
 }
 /**
  * 包含同步action和异步action
@@ -101,6 +105,10 @@ const actions = {
     const result = await getAdminUser(query)
     commit(RECEIVE_USER_LIST, result)
   },
+  async getRoleList({ commit }, query) {
+    const result = await reqRoles(query)
+    commit(RECEIVE_ROLE_LIST, result)
+  }
 }
 
 const mutations = {
@@ -119,6 +127,10 @@ const mutations = {
     state.adminUserList = data;
     state.adminUserListTotal = total;
   },
+  [RECEIVE_ROLE_LIST](state, { data, total }) {
+    state.roleList = data;
+    state.roleTotal = total;
+  }
 }
 
 

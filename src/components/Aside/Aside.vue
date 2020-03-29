@@ -15,17 +15,35 @@
       :default-active="currentPath"
       @select="menuSelect"
     >
-      <Item :menus="menus" />
+      <el-menu-item index="/home" style="background-color:#001529">
+        <i class="el-icon-s-home"></i>
+        <span slot="title">首页</span>
+      </el-menu-item>
+      <!-- 一级菜单 -->
+      <el-submenu v-for="(item, index) in menuList" :key="index" :index="index.toString()">
+        <template slot="title">
+          <i :class="item.icon"></i>
+          <span>{{ item.title }}</span>
+        </template>
+        <template v-if="item.children.length > 0">
+          <el-menu-item v-for="(_item, _index) in item.children" :key="_index" :index="_item.key">
+            <template slot="title">
+              <i :class="_item.icon"></i>
+              <span>{{ _item.title }}</span>
+            </template>
+          </el-menu-item>
+        </template>
+      </el-submenu>
     </el-menu>
   </el-aside>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import Item from "./Item";
+// import Item from "./Item";
 import menuList from "@/config/menuConfig";
 export default {
-  components: { Item },
+  // components: { Item },
   data() {
     return {
       // 是否折叠
@@ -36,7 +54,8 @@ export default {
     ...mapGetters(["sidebar"]),
     ...mapState({
       device: state => state.app.device,
-      menus: state => state.adminUser.menus
+      menus: state => state.adminUser.menus,
+      menuList: state => state.authConfig.menuList
     }),
     currentPath() {
       // 得到当前请求的路由路径
@@ -61,13 +80,16 @@ export default {
       return !this.sidebar.opened;
     }
   },
-  
+
   created() {
-    
+    this.getconfig()
     this.$store.dispatch("saveUser");
   },
 
   methods: {
+    async getconfig() {
+      await this.$store.dispatch("getThisUserAuth");
+    },
     toggleCollapse() {
       this.$store.dispatch("app/toggleSideBar");
     },

@@ -20,7 +20,7 @@
         </el-col>
         <!-- <el-col class="search" :xs="8" :md="3">
           <el-button type="primary" @click="getUserList">查询</el-button>
-        </el-col> -->
+        </el-col>-->
         <el-col class="add" :xs="8" :md="8">
           <el-button type="primary" @click="openAddUserDialog">添加用户</el-button>
         </el-col>
@@ -74,12 +74,35 @@
       :visible.sync="isShowDialog"
       @close="dialogClose"
     >
-      <el-form ref="form" :model="addUserForm" :rules="addUserRules" label-width="70px">
+      <el-form ref="form" :model="addUserForm" :rules="addUserRules" label-width="90px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addUserForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="addUserForm.password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item label="所属角色" prop="roles">
+          <el-select multiple v-model="addUserForm.roles">
+            <el-option
+              v-for="(item, index) in roleList"
+              :key="index"
+              :label="item.name"
+              :value="item._id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用户权限">
+          <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+          <el-tree
+            :data="permission"
+            show-checkbox
+            default-expand-all
+            node-key="_id"
+            ref="tree"
+            highlight-current
+            :props="defaultProps"
+            @check-change="handleCheckChange"
+          ></el-tree>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -100,24 +123,33 @@ export default {
       loading: true,
       addUserForm: {
         username: "",
-        password: ""
+        password: "",
+        roles: [],
+        permission: []
       },
       addUserRules: {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" }
         ],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        roles: [{ required: true, message: "请选择角色", trigger: "blur" }]
       },
       pageSize: [5, 10, 15, 20],
       searchQuery: { limit: 10, page: 1, where: { username: { $regex: "" } } },
       isShowDialog: false,
-      isUpdate: false
+      isUpdate: false,
+      checkAll: false,
+      defaultProps: {
+        label: "message"
+      }
     };
   },
   computed: {
     ...mapState({
       userList: state => state.adminUser.adminUserList,
-      user: state => state.adminUser.adminUser
+      user: state => state.adminUser.adminUser,
+      roleList: state => state.adminUser.roleList,
+      permission: state => state.adminUser.adminUser.permission
     })
   },
   filters: {
@@ -126,6 +158,7 @@ export default {
 
   created() {
     this.getUserList();
+    if (!this.roleList) this.$store.dispatch("getRoleList", {});
   },
 
   methods: {
@@ -139,7 +172,7 @@ export default {
     },
 
     /**
-     * 打开添加/修改用户对话框
+     * 打开添加用户对话框
      */
     openAddUserDialog() {
       if (this.addUserForm._id) delete this.addUserForm._id;
@@ -196,6 +229,8 @@ export default {
      */
     dialogClose() {
       this.$refs.form.resetFields();
+      this.addUserForm.permission = [];
+      this.$refs.tree.setCheckedKeys([], true);
     },
     /**
      * 点击修改按钮: 修改用户
@@ -203,10 +238,23 @@ export default {
     updateUser(user) {
       this.isUpdate = true;
       this.isShowDialog = true;
-      this.addUserForm._id = user._id;
+      const { username, _id, roles, permission } = user
       // 在对话框的生命周期之后再赋值, 这样子就可以保证初始值一定是空值
       this.$nextTick(() => {
-        this.addUserForm.username = user.username;
+        this.addUserForm._id = _id;
+        roles.forEach(role => {
+          this.addUserForm.roles.push(role._id);
+        })
+        this.addUserForm.username = username;
+        permission.forEach(item => {
+          this.addUserForm.permission.push(item._id);
+        });
+        if (this.addUserForm.permission.length === this.permission.length) {
+          this.checkAll = true;
+        } else {
+          this.checkAll = false;
+        }
+        this.$refs.tree.setCheckedKeys(this.addUserForm.permission, true);
       });
     },
     delUser(user) {
@@ -228,13 +276,38 @@ export default {
             type: "success",
             message: "删除成功!"
           });
-          this.$store.dispatch("getUserList");
+          this.$store.dispatch("getUserList", this.searchQuery);
         })
         .catch(() => {});
     },
 
     clearSearch() {
-      this.getUserList()
+      this.getUserList();
+    },
+    /**
+     * 权限选项改变时的回调函数
+     */
+    handleCheckChange() {
+      this.addUserForm.permission = [];
+      const checked = this.$refs.tree.getCheckedNodes();
+      checked.forEach(item => {
+        this.addUserForm.permission.push(item._id);
+      });
+      if (this.addUserForm.permission.length === this.permission.length) {
+        this.checkAll = true;
+      } else {
+        this.checkAll = false;
+      }
+    },
+    /**
+     * 控制全选
+     */
+    handleCheckAllChange() {
+      if (this.checkAll) {
+        this.$refs.tree.setCheckedNodes(this.permission);
+      } else {
+        this.$refs.tree.setCheckedKeys([]);
+      }
     }
   }
 };
