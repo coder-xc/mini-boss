@@ -35,13 +35,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="现价" prop="prices.nowPrice">
-            <el-input type="number" v-model="goodsForm.prices.nowPrice" placeholder="请输入商品现价"></el-input>
+            <el-input v-model="goodsForm.prices.nowPrice" placeholder="请输入商品现价"></el-input>
           </el-form-item>
           <el-form-item label="热门价格" prop="prices.hotPrice">
-            <el-input type="number" v-model="goodsForm.prices.hotPrice" placeholder="请输入商品热门价格"></el-input>
+            <el-input v-model="goodsForm.prices.hotPrice" placeholder="请输入商品热门价格"></el-input>
           </el-form-item>
           <el-form-item label="原价" prop="prices.initPrice">
-            <el-input type="number" v-model="goodsForm.prices.initPrice" placeholder="请输入商品原价"></el-input>
+            <el-input v-model="goodsForm.prices.initPrice" placeholder="请输入商品原价"></el-input>
           </el-form-item>
           <el-form-item label="商品服务" prop="service">
             <el-checkbox-group v-model="goodsForm.services" placeholder="请选择商品服务">
@@ -78,6 +78,16 @@
                 </span>
               </div>
             </el-upload>
+          </el-form-item>
+          <el-form-item label="商品评论" prop="comment">
+            <el-select multiple style="width:100%" v-model="goodsForm.comments" placeholder="请选择商品评论">
+              <el-option
+                v-for="item in commentList"
+                :key="item._id"
+                :label="item.message"
+                :value="item._id"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="商品详情">
             <quill-editor v-model="goodsForm.description"></quill-editor>
@@ -206,31 +216,38 @@ export default {
         },
         description: "",
         attributes: [],
-        services: []
+        services: [],
+        comments: []
       },
       goodsFormRules: {
         title: [{ required: true, message: "请输入商品标题", trigger: "blur" }],
         category: [
           { required: true, message: "请选择商品分类", trigger: "blur" }
         ],
+        comment: [
+          { required: true, message: "请选择商品评论", trigger: "blur" }
+        ],
         images: [
           { required: true, message: "请上传商品图片", trigger: "blur" }
         ],
         prices: {
           nowPrice: [
-            { required: true, message: "请输入商品现价", trigger: "blur" }
+            { required: true, message: "请输入商品现价", trigger: "blur" },
+            { validator: this.checkNumber, trigger: "blur" }
           ],
           hotPrice: [
-            { required: true, message: "请输入热门价格", trigger: "blur" }
+            { required: true, message: "请输入热门价格", trigger: "blur" },
+            { validator: this.checkNumber, trigger: "blur" }
           ],
           initPrice: [
-            { required: true, message: "请输入商品原价", trigger: "blur" }
+            { required: true, message: "请输入商品原价", trigger: "blur" },
+            { validator: this.checkNumber, trigger: "blur" }
           ]
         },
         service: { required: true, message: "请选择商品服务", trigger: "blur" }
       },
       fileList: [],
-      previewPath: '',
+      previewPath: "",
       previewVisible: false,
       content: "",
       //为attribute 提供的空值, 防止 新增时 get 不到需要的属性
@@ -246,53 +263,65 @@ export default {
     ...mapState({
       categoryList: state => state.goods.categoryList,
       services: state => state.goods.goodsService,
-      currentGoods: state => state.goods.currentGoods
+      currentGoods: state => state.goods.currentGoods,
+      commentList: state => state.goods.commentList
     })
   },
 
   created() {
     if (!this.services) this.$store.dispatch("getGoodsService", {});
+    if (!this.commentList) this.$store.dispatch("getComments", {});
     this.getCategories();
-    const { type } = this.$route.params;
-    if (type === "add") {
-      this.isUpdate = false;
-    } else if (type === "update") {
-      this.isUpdate = true;
-
-      const {
-        attributes,
-        category,
-        description,
-        images,
-        prices,
-        services,
-        title,
-        _id
-      } = this.currentGoods;
-      const { hotPrice, initPrice, nowPrice } = prices;
-      this.goodsForm._id = _id;
-      this.goodsForm.title = title;
-      this.goodsForm.description = description;
-      this.goodsForm.attributes = attributes;
-      this.goodsForm.category = category._id;
-      this.goodsForm.images = images;
-      images.forEach(img => {
-        const tempPic = {
-          url: img,
-          name: new Date().getTime()
-        };
-        this.fileList.push(tempPic);
-      });
-
-      this.goodsForm.prices.hotPrice = hotPrice;
-      this.goodsForm.prices.initPrice = initPrice;
-      this.goodsForm.prices.nowPrice = nowPrice;
-      services.forEach(service => {
-        this.goodsForm.services.push(service._id);
-      });
-    }
+    this.dealExistData();
   },
   methods: {
+    /**
+     * 判断是添加还是更新, 若是更新的话, 就把数据添加上去
+     */
+    dealExistData() {
+      const { type } = this.$route.params;
+      if (type === "add") {
+        this.isUpdate = false;
+      } else if (type === "update") {
+        this.isUpdate = true;
+        const {
+          attributes,
+          category,
+          description,
+          images,
+          prices,
+          services,
+          title,
+          comments,
+          _id
+        } = this.currentGoods;
+        const { hotPrice, initPrice, nowPrice } = prices;
+        this.goodsForm._id = _id;
+        this.goodsForm.title = title;
+        this.goodsForm.description = description;
+        this.goodsForm.attributes = attributes;
+        this.goodsForm.category = category._id;
+        this.goodsForm.images = images;
+        // this.goodsForm.comments = comments;
+        comments.forEach(comment => {
+          this.goodsForm.comments.push(comment._id)
+        })
+        images.forEach(img => {
+          const tempPic = {
+            url: img,
+            name: new Date().getTime()
+          };
+          this.fileList.push(tempPic);
+        });
+        this.goodsForm.prices.hotPrice = hotPrice;
+        this.goodsForm.prices.initPrice = initPrice;
+        this.goodsForm.prices.nowPrice = nowPrice;
+        services &&
+          services.forEach(service => {
+            this.goodsForm.services.push(service._id);
+          });
+      }
+    },
     /**
      * 序列化 demoItem
      */
@@ -313,6 +342,7 @@ export default {
         });
       });
     },
+
     /**
      * 清除已选择的父类
      */
@@ -320,7 +350,6 @@ export default {
       this.goodsForm.category = "";
       this.$refs.form.validateField("category");
     },
-
     /**
      * 图片预览
      */
@@ -411,18 +440,45 @@ export default {
     },
 
     async save() {
+      this.goodsForm.prices.hotPrice = parseFloat(
+        this.goodsForm.prices.hotPrice
+      );
+      this.goodsForm.prices.initPrice = parseFloat(
+        this.goodsForm.prices.initPrice
+      );
+      this.goodsForm.prices.nowPrice = parseFloat(
+        this.goodsForm.prices.nowPrice
+      );
       await reqAddUpdateGoods(this.goodsForm);
       this.$message({
         message: `${this.isUpdate ? "修改" : "添加"}商品成功！`,
         type: "success"
       });
       this.$router.replace("/goods/goodslist");
+    },
+    /**
+     * 自定义表单验证
+     * 验证是否为数字
+     */
+    checkNumber(rule, value, callback) {
+      let tip = "该值不能为空";
+      if (!value && value !== 0) {
+        return callback(new Error(tip));
+      }
+      if (rule.field === "prices.nowPrice") {
+        tip = "请输入现价";
+      } else if (rule.field === "prices.hotPrice") {
+        tip = "请输入热门价格";
+      } else if (rule.field === "prices.initPrice") {
+        tip = "请输入原价";
+      }
+      const reg = /^[0-9]+.?[0-9]*$/;
+      if (!reg.test(value)) {
+        callback(new Error("请输入大于等于0的数字"));
+      } else {
+        callback();
+      }
     }
   }
 };
 </script>
-
-<style lang="scss" scoped>
-</style>
-
-

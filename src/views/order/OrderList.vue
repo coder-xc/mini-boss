@@ -31,7 +31,7 @@
         <el-table-column align="center" prop="orderNum" label="订单编号" min-width="200"></el-table-column>
         <el-table-column align="center" prop="username" label="用户名" min-width="150">
           <template v-slot:default="slotProps">
-            <span>{{slotProps.row.user.username}}</span>
+            <span>{{slotProps.row.user && slotProps.row.user.username}}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="订单商品数量" min-width="100">
@@ -275,6 +275,7 @@ export default {
       this.isUpdate = true;
       this.isShowAddUpdateDialog = true;
       const { commoditis, user, _id } = order;
+      // debugger
       this.$nextTick(() => {
         commoditis.forEach(item => this.orderForm.commoditis.push(item._id));
         this.orderForm.user = user._id;
@@ -320,7 +321,7 @@ export default {
             type: "success",
             message: "删除成功!"
           });
-          this.$store.dispatch("getOrders").then(() => (this.loading = false));
+          this.$store.dispatch("getOrders", this.searchQuery).then(() => (this.loading = false));
         })
         .catch(() => {});
     },

@@ -5,9 +5,9 @@ import request from '@/utils/request'
  */
 export const reqOrders = (query) => {
   const params = JSON.parse(JSON.stringify(query))
-  if(!params.where.orderNum.$regex) {
-    delete params.where
-  }
+  // if(!params.where.orderNum.$regex) {
+  //   delete params.where
+  // }
   return request({
     url: `/orders?query=${JSON.stringify(params)}`
   })

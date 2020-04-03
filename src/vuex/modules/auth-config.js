@@ -1,4 +1,5 @@
 import { PERMISSION_MAPPING_VIEW } from '../mutation-types'
+import { CLEAR_CACHE } from '../mutation-types'
 import { getUserInfo } from 'api/user'
 
 const state = {
@@ -15,6 +16,7 @@ const state = {
   merchant: {},
   services: {},
   role: {},
+  auth: {},
 }
 
 //权限 -> 对应视图是否渲染
@@ -53,7 +55,7 @@ const permissionMappingView = (data) => {
         return item._id == permission._id
       })
       if (!has)
-        data.permission.push()
+        data.permission.push(permission)
     })
   })
 
@@ -72,6 +74,18 @@ const permissionMappingView = (data) => {
   })
 
   let menuListMapObj = {
+    auth: {
+      title: '权限管理',
+      key: '/auth',
+      icon: 'el-icon- iconfont icon-quanxianguanli',
+      children: [ // 子菜单列表
+        {
+          title: '用户管理',
+          key: '/auth/userlist',
+          icon: ''
+        },
+      ]
+    },
     activity: {
       title: '活动管理',
       key: '/active',
@@ -161,19 +175,23 @@ const permissionMappingView = (data) => {
       key: '/goods/goodsservice',
       icon: ''
     },
-    // role: {}
+    role: {
+      title: '角色管理',
+      key: '/auth/rolelist',
+      icon: ''
+    }
   }
 
   let flag = true
-  if (state.menuList.length !== 0) {
-    return;
+
+  if (state.menuList.length != 0) {
+    return
   }
+
   for (const key in menuListMapObj) {
     // console.log(state[key].find)
     const standard = key == 'goods' || key == 'services' || key == 'goodsAndServices'
-    // debugger
     if (standard && flag) {
-
       if (state.goods.find || state.services.find) {
         if (state.goods.find) {
           menuListMapObj.goodsAndServices.children.push(menuListMapObj.goods)
@@ -189,7 +207,13 @@ const permissionMappingView = (data) => {
       }
     } else if (!standard && state[key].hasOwnProperty('find') && state[key]['find']) {
       //模块 中 只有一项 而且不是 其他模块子项
-      state.menuList.push(menuListMapObj[key])
+      //权限菜单
+      if (key == 'role' || key == 'auth') {
+        if (state['role']['find']) menuListMapObj.auth.children.push(menuListMapObj.role)
+        state.menuList.push(menuListMapObj.auth)
+      } else {
+        state.menuList.push(menuListMapObj[key])
+      }
     }
   }
   // console.log(state.menuList, state)
@@ -199,6 +223,9 @@ const mutations = {
   [PERMISSION_MAPPING_VIEW](state, data) {
     // console.log(func)
     permissionMappingView(data)
+  },
+  [CLEAR_CACHE](state) {
+    state.cache = false
   }
 }
 
@@ -214,6 +241,9 @@ const actions = {
       //以前拿到过接口的数据 防止多次请求 增加接口压力
       commit(PERMISSION_MAPPING_VIEW, state.cacheData, permissionMappingView)
     }
+  },
+  clearCache({ commit }) {
+    commit(CLEAR_CACHE)
   }
 }
 

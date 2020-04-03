@@ -216,7 +216,7 @@ export default {
     /**
      * 控制全选
      */
-    handleCheckAllChange(val) {
+    handleCheckAllChange() {
       if (this.checkAll) {
         this.$refs.tree.setCheckedNodes(this.permission);
       } else {

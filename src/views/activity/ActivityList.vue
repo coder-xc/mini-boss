@@ -28,7 +28,7 @@
       <el-table v-loading="loading" element-loading-text="拼命加载中" :data="activeList" stripe border>
         <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
         <el-table-column align="center" type="index" label="#"></el-table-column>
-        <el-table-column align="center" prop="title" label="活动名称" width="200"></el-table-column>
+        <el-table-column align="center" prop="title" label="活动名称"></el-table-column>
         <el-table-column align="center" prop="icon" label="活动图片">
           <template v-slot:default="slotProps">
             <img

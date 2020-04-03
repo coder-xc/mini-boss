@@ -1,4 +1,3 @@
-import menuList from "@/config/menuConfig";
 import { reqActiveList } from 'api/activity';
 import { reqGoods, reqGoodsServices } from 'api/goods';
 import { reqCategories } from 'api/category';

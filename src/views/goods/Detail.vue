@@ -3,7 +3,7 @@
     <el-page-header @back="goBack" content="商品详情"></el-page-header>
     <el-card v-if="currentGoods._id">
       <el-row type="flex" style="margin-top:1rem; flex-wrap: wrap;">
-        <el-col :md="12" style="magrin-top: 1rem;">
+        <el-col :md="14" style="magrin-top: 1rem;">
           <el-form :model="currentGoods" :rules="rules" ref="ruleForm" label-width="120px">
             <el-form-item label="商品标题：">
               <span>{{currentGoods.title}}</span>
@@ -63,7 +63,7 @@
               </el-card>
             </el-form-item>
             <el-form-item label="商品服务：">
-              <el-card v-if="currentGoods.services.length > 0">
+              <el-card v-if="currentGoods.services && currentGoods.services.length > 0">
                 <div class="service" v-for="item in currentGoods.services" :key="item._id">
                   <el-form>
                     <el-form-item label="服务名称">
@@ -78,20 +78,25 @@
                   </el-form>
                 </div>
               </el-card>
-              <span v-if="currentGoods.services.length === 0">无</span>
+              <span v-if="!currentGoods.services || currentGoods.services.length === 0">无</span>
             </el-form-item>
             <el-form-item label="商品评论：">
-              <div v-for="(item, index) in currentGoods.comments" :key="index">
-                <el-form>
-                  <el-form-item label="评论内容">
+              <div
+                class="goods-comment"
+                v-for="(item, index) in currentGoods.comments"
+                :key="index"
+              >
+                <el-form label-width="100px">
+                  <el-form-item label="评论内容：">
                     <span>{{item.message}}</span>
                   </el-form-item>
-                  <el-form-item label="评论图片">
+                  <el-form-item label="评论图片：">
                     <img
                       v-for="(pic, _index) in item.images"
                       :key="_index"
                       :src="pic"
                       alt="commentPic"
+                      class="commtent-img"
                     />
                   </el-form-item>
                 </el-form>
@@ -136,7 +141,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       //  这里的vm指的就是vue实例，可以用来当做this使用
-      if(from.path === "/") {
+      if (from.path === "/") {
         return;
       }
       vm.$store.commit(RECEIVE_BACK_ROUTE_PATH, from.path);
@@ -157,6 +162,17 @@ export default {
   height: 150px;
   border: 1px solid #000;
   margin-right: 10px;
+}
+.goods-comment {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  .commtent-img {
+    width: 150px;
+    height: 150px;
+    border: 1px solid #000;
+    margin-right: 10px;
+  }
 }
 
 .service {

@@ -30,6 +30,8 @@
 </template>
 
 <script>
+// import lei from '../../../public/static/images/weather/lei.gif'
+
 import { mapState, mapGetters } from "vuex";
 import { formateDate } from "../../utils/dateUtils";
 import { reqWeather } from "../../api";
@@ -72,6 +74,7 @@ export default {
       })
         .then(() => {
           this.$store.dispatch("logout");
+          this.$store.dispatch("clearCache");
           this.$router.replace("/login");
         })
         .catch(() => {});
@@ -85,16 +88,10 @@ export default {
      * 获取天气信息显示
      */
     async getWeather() {
-      const BMap = window.BMap;
-      if (!BMap) return;
-      const myCity = new BMap.LocalCity();
-      // 获取城市名称
-      myCity.get(async result => {
-        // console.log(result.name) // 城市名称
-        const { dayPictureUrl, weather } = await reqWeather(result.name);
-        this.dayPictureUrl = dayPictureUrl;
-        this.weather = weather;
-      });
+      const result = await reqWeather()
+      const { wea_img, wea } = result
+      this.dayPictureUrl = `/static/images/weather/${wea_img}.gif`
+      this.weather = wea;
     }
   }
 };

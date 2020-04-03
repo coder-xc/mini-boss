@@ -388,7 +388,7 @@ export default {
      */
     checkNumber(rule, value, callback) {
       let tip = "该值不能为空";
-      if (!value) {
+      if (!value && value !== 0) {
         return callback(new Error(tip));
       }
       if (rule.field === "collectCount") {
@@ -398,9 +398,9 @@ export default {
       } else if (rule.field === "salesVolume") {
         tip = "请输入总交易量";
       }
-      const reg = /^[1-9]\d*$/;
+      const reg = /^[0-9]\d*$/;
       if (!reg.test(value)) {
-        callback(new Error("请输入数字值"));
+        callback(new Error("请输入大于等于0的数字"));
       } else {
         callback();
       }
