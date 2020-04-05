@@ -216,16 +216,19 @@ const permissionMappingView = (data) => {
       }
     }
   }
-  // console.log(state.menuList, state)
+  debugger
+  console.log(state.menuList, state)
 }
 
 const mutations = {
   [PERMISSION_MAPPING_VIEW](state, data) {
     // console.log(func)
+    debugger
     permissionMappingView(data)
   },
   [CLEAR_CACHE](state) {
     state.cache = false
+    debugger
   }
 }
 
@@ -242,7 +245,8 @@ const actions = {
       commit(PERMISSION_MAPPING_VIEW, state.cacheData, permissionMappingView)
     }
   },
-  clearCache({ commit }) {
+  async clearCache({ commit }) {
+    debugger
     commit(CLEAR_CACHE)
   }
 }

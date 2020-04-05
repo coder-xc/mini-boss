@@ -1,1 +1,1 @@
-export const serverURL = 'http://dev.shubuzuo.top/' // 开发环境
+export const serverURL = '' // 开发环境
