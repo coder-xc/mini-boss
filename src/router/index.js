@@ -18,7 +18,7 @@ VueRouter.prototype.replace = function replace(location) {
 };
 
 const router = new VueRouter({
-  //mode: 'history',
+  mode: 'history',
   routes,
   // base: '/shopadmin/', // 生产环境打包设置
 })

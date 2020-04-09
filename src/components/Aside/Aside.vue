@@ -83,7 +83,6 @@ export default {
 
   created() {
     this.getconfig()
-    this.$store.dispatch("saveUser");
   },
 
   methods: {

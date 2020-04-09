@@ -98,12 +98,14 @@
 <script>
 import { mapState } from "vuex";
 import { reqAddRole, reqDelRole } from "api/user";
+import { merge } from "@/utils/tools";
 export default {
   computed: {
     ...mapState({
       roleList: state => state.adminUser.roleList,
       total: state => state.adminUser.roleTotal,
-      permission: state => state.adminUser.adminUser.permission
+      // permission: state => state.adminUser.adminUser.permission,
+      user: state => state.adminUser.adminUser
     })
   },
   data() {
@@ -129,19 +131,35 @@ export default {
       isUpdate: false,
       defaultProps: {
         label: "message"
-      }
+      },
+      permission: []
     };
   },
   created() {
     this.getRoleList();
   },
+  watch: {
+    user() {
+      this.mergePermission();
+    }
+  },
   methods: {
+    /**
+     * 合并用户权限
+     */
+    mergePermission() {
+      const { permission, roles } = this.user;
+      this.permission = roles.reduce((pre, item) => {
+        return merge(pre, item.permission);
+      }, permission);
+    },
+
     /**
      * 每页/条改变时触发
      */
     sizeChange(size) {
       this.searchQuery.limit = size;
-      this.getUserList();
+      this.getRoleList();
     },
 
     /**
@@ -149,7 +167,7 @@ export default {
      */
     pageChange(page) {
       this.searchQuery.page = page;
-      this.getUserList();
+      this.getRoleList();
     },
     clearSearch() {
       this.getRoleList();

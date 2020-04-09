@@ -36,12 +36,14 @@ export const getAdminUser = (query) => request({
 /**
  * 添加用户
  */
-export const addUser = ({ username, password }) => request({
+export const addUser = ({ username, password, roles, permission }) => request({
   url: '/auth/register',
   method: 'POST',
   data: {
     username,
-    password
+    password,
+    roles,
+    permission
   },
 })
 

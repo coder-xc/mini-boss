@@ -36,6 +36,7 @@ const state = {
  * role : null
  */
 const permissionMappingView = (data) => {
+
   let mapObj = {
     actions: 'activity',
     banners: 'banner',
@@ -71,6 +72,7 @@ const permissionMappingView = (data) => {
       case 'delete': state[mapObj[item.path]].delete = true
         break
     }
+    // console.log('重求', state)
   })
 
   let menuListMapObj = {
@@ -205,30 +207,44 @@ const permissionMappingView = (data) => {
         state.menuList.push(menuListMapObj.goodsAndServices)
         flag = false
       }
-    } else if (!standard && state[key].hasOwnProperty('find') && state[key]['find']) {
+    } else if (!standard) {
       //模块 中 只有一项 而且不是 其他模块子项
       //权限菜单
-      if (key == 'role' || key == 'auth') {
-        if (state['role']['find']) menuListMapObj.auth.children.push(menuListMapObj.role)
-        state.menuList.push(menuListMapObj.auth)
-      } else {
+      if (key == 'role') {
+        if (state['role']['find']) {
+          menuListMapObj.auth.children.push(menuListMapObj.role)
+          state.menuList.push(menuListMapObj.auth)
+        } else {
+          state.menuList.push(menuListMapObj.auth)
+        }
+      } else if (state[key].hasOwnProperty('find') && state[key]['find']) {
         state.menuList.push(menuListMapObj[key])
       }
     }
   }
-  debugger
-  console.log(state.menuList, state)
+  // console.log(state.menuList, state)
 }
 
 const mutations = {
   [PERMISSION_MAPPING_VIEW](state, data) {
     // console.log(func)
-    debugger
     permissionMappingView(data)
   },
   [CLEAR_CACHE](state) {
     state.cache = false
-    debugger
+    state.menuList = []
+    state.role = {}
+    state.menuList = []
+    state.activity = {}
+    state.banner = {}
+    state.category = {}
+    state.comment = {}
+    state.goods = {}
+    state.order = {}
+    state.merchant = {}
+    state.services = {}
+    state.role = {}
+    state.auth = {}
   }
 }
 
@@ -245,8 +261,7 @@ const actions = {
       commit(PERMISSION_MAPPING_VIEW, state.cacheData, permissionMappingView)
     }
   },
-  async clearCache({ commit }) {
-    debugger
+  clearCache({ commit }) {
     commit(CLEAR_CACHE)
   }
 }

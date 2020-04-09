@@ -115,8 +115,8 @@
 <script>
 import { mapState } from "vuex";
 import { formateDate } from "@/utils/dateUtils";
+import { merge } from "@/utils/tools";
 import { addUser, updateUser, delUser } from "api/user";
-
 export default {
   data() {
     return {
@@ -141,15 +141,15 @@ export default {
       checkAll: false,
       defaultProps: {
         label: "message"
-      }
+      },
+      permission: []
     };
   },
   computed: {
     ...mapState({
       userList: state => state.adminUser.adminUserList,
       user: state => state.adminUser.adminUser,
-      roleList: state => state.adminUser.roleList,
-      permission: state => state.adminUser.adminUser.permission
+      roleList: state => state.adminUser.roleList
     })
   },
   filters: {
@@ -160,15 +160,31 @@ export default {
     this.getUserList();
     if (!this.roleList) this.$store.dispatch("getRoleList", {});
   },
-
+  watch: {
+    user() {
+      console.log('watch')
+      this.mergePermission();
+    }
+  },
   methods: {
     /**
      * 获取用户列表
      */
     getUserList() {
-      this.$store
-        .dispatch("getUserList", this.searchQuery)
-        .then(() => (this.loading = false));
+      this.$store.dispatch("getUserList", this.searchQuery).then(() => {
+        this.loading = false;
+      });
+    },
+
+    /**
+     * 合并用户权限
+     */
+    mergePermission() {
+      const { permission, roles } = this.user;
+      this.permission = roles.reduce((pre, item) => {
+        return merge(pre, item.permission);
+      }, permission);
+      console.log(this.permission)
     },
 
     /**
@@ -210,9 +226,18 @@ export default {
         if (valid) {
           if (!this.isUpdate) {
             // 添加
+            // console.log(this.addUserForm);
             await addUser(this.addUserForm);
           } else {
+            // console.log(this.addUserForm);
             // 修改
+            if (this.addUserForm._id === this.user._id) {
+              this.$message({
+                type: "error",
+                message: "不能修改当前登录用户!"
+              });
+              return;
+            }
             await updateUser(this.addUserForm);
           }
           this.$message({
@@ -238,13 +263,13 @@ export default {
     updateUser(user) {
       this.isUpdate = true;
       this.isShowDialog = true;
-      const { username, _id, roles, permission } = user
+      const { username, _id, roles, permission } = user;
       // 在对话框的生命周期之后再赋值, 这样子就可以保证初始值一定是空值
       this.$nextTick(() => {
         this.addUserForm._id = _id;
         roles.forEach(role => {
           this.addUserForm.roles.push(role._id);
-        })
+        });
         this.addUserForm.username = username;
         permission.forEach(item => {
           this.addUserForm.permission.push(item._id);
@@ -258,19 +283,19 @@ export default {
       });
     },
     delUser(user) {
+      if (user._id === this.user._id) {
+        this.$message({
+          type: "error",
+          message: "不能删除当前登录用户!"
+        });
+        return;
+      }
       this.$confirm("确定删除该用户吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(async () => {
-          if (user._id === this.user._id) {
-            this.$message({
-              type: "error",
-              message: "不能删除当前登录用户!"
-            });
-            return;
-          }
           await delUser(user);
           this.$message({
             type: "success",
