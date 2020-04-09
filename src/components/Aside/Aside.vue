@@ -40,14 +40,10 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-// import Item from "./Item";
-import menuList from "@/config/menuConfig";
 export default {
-  // components: { Item },
   data() {
     return {
-      // 是否折叠
-      // isCollapse: false
+      
     };
   },
   computed: {
@@ -84,26 +80,16 @@ export default {
   created() {
     this.getconfig()
   },
-
   methods: {
     async getconfig() {
       await this.$store.dispatch("getThisUserAuth");
     },
-    toggleCollapse() {
-      this.$store.dispatch("app/toggleSideBar");
-    },
+
     menuSelect() {
       if (this.device === "mobile") {
         this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
       }
     },
-    currentAuth() {
-      menuList.forEach(menu => {
-        if (!this.menus.find(item => menu.key === item)) {
-          // delete
-        }
-      });
-    }
   }
 };
 </script>
