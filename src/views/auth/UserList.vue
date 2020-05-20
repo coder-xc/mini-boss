@@ -162,7 +162,6 @@ export default {
   },
   watch: {
     user() {
-      console.log('watch')
       this.mergePermission();
     }
   },
@@ -184,7 +183,6 @@ export default {
       this.permission = roles.reduce((pre, item) => {
         return merge(pre, item.permission);
       }, permission);
-      console.log(this.permission)
     },
 
     /**
@@ -226,10 +224,8 @@ export default {
         if (valid) {
           if (!this.isUpdate) {
             // 添加
-            // console.log(this.addUserForm);
             await addUser(this.addUserForm);
           } else {
-            // console.log(this.addUserForm);
             // 修改
             if (this.addUserForm._id === this.user._id) {
               this.$message({
@@ -261,11 +257,17 @@ export default {
      * 点击修改按钮: 修改用户
      */
     updateUser(user) {
+
       this.isUpdate = true;
       this.isShowDialog = true;
       const { username, _id, roles, permission } = user;
+      // debugger
       // 在对话框的生命周期之后再赋值, 这样子就可以保证初始值一定是空值
       this.$nextTick(() => {
+        // debugger
+        if(this.permission.length === 0) {
+          this.mergePermission();
+        }
         this.addUserForm._id = _id;
         roles.forEach(role => {
           this.addUserForm.roles.push(role._id);

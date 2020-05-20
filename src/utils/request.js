@@ -20,6 +20,7 @@ Vue.prototype._axiosPromiseArr = []
  */
 instance.interceptors.request.use((config) => {
   // 处理请求参数
+  // debugger
   if (config.data && (config.data instanceof FormData) === false) {
     config.data = JSON.parse(JSON.stringify(config.data))
     for (let item in config.data) {
@@ -53,8 +54,12 @@ instance.interceptors.request.use((config) => {
  *  失败回调: 统一处理请求异常
  */
 instance.interceptors.response.use(
-  response => response.data,
+  response => {
+    // debugger
+    return response.data
+  },
   error => {
+    // debugger
     // 1. 没有token直接发请求的错误
     if (!error.response) {
       // 取消请求特殊处理

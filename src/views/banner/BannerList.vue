@@ -158,7 +158,7 @@ export default {
      * 调接口获取轮播图数据
      */
     async getBanners() {
-      const result = await reqBanner(this.searchQuery);
+      const result = await reqBanner(this.searchQuery)
       this.loading = false;
       this.bannerList = result.data;
       this.total = result.total;

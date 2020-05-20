@@ -3,12 +3,15 @@ import request from '@/utils/request'
 /**
  * 获取轮播图
  */
-export const reqBanner = (query) => request({
-  url: `/banners?query=${JSON.stringify(query)}`,
-  headers: {
-    checkToken: true
-  }
-})
+export const reqBanner = (query) => {
+  // debugger
+  return request({
+    url: `/banners?query=${JSON.stringify(query)}`,
+    headers: {
+      checkToken: true
+    }
+  })
+}
 
 /**
  * 添加或修改轮播图

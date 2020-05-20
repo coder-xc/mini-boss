@@ -249,6 +249,9 @@ export default {
       this.isShowDialog = true;
       const { permission, name, description, status, _id } = role;
       this.$nextTick(() => {
+        if(this.permission.length === 0) {
+          this.mergePermission();
+        }
         this.addRoleForm._id = _id;
         this.addRoleForm.name = name;
         this.addRoleForm.description = description;

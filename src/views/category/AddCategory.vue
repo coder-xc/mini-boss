@@ -300,7 +300,8 @@ export default {
      * 监听属性值类型select下拉框的改变
      */
     selectChange(index) {
-      if (this.categoryForm.attributes[index].messageType === "array") {
+      debugger
+      if (this.categoryForm.attribute[index].messageType === "array") {
         this.categoryForm.attributes[index].message = [];
       } else {
         this.categoryForm.attributes[index].message = "";

@@ -362,10 +362,12 @@ export default {
      * 移除已上传的图片
      */
     handleRemove(file) {
-      this._axiosPromiseArr.forEach(cancel => {
-        cancel({ msg: "图片已停止上传", code: 600 });
-      });
-      this.imgLoading.close();
+      if (this.imgLoading) {
+        this._axiosPromiseArr.forEach(cancel => {
+          cancel({ msg: "图片已停止上传", code: 600 });
+        });
+        this.imgLoading.close();
+      }
       const uid = file.uid;
       const i = this.fileList.findIndex(file => file.uid === uid);
       this.fileList.splice(i, 1);
