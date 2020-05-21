@@ -80,7 +80,12 @@
             </el-upload>
           </el-form-item>
           <el-form-item label="商品评论" prop="comment">
-            <el-select multiple style="width:100%" v-model="goodsForm.comments" placeholder="请选择商品评论">
+            <el-select
+              multiple
+              style="width:100%"
+              v-model="goodsForm.comments"
+              placeholder="请选择商品评论"
+            >
               <el-option
                 v-for="item in commentList"
                 :key="item._id"
@@ -304,8 +309,8 @@ export default {
         this.goodsForm.images = images;
         // this.goodsForm.comments = comments;
         comments.forEach(comment => {
-          this.goodsForm.comments.push(comment._id)
-        })
+          this.goodsForm.comments.push(comment._id);
+        });
         images.forEach(img => {
           const tempPic = {
             url: img,
@@ -406,8 +411,15 @@ export default {
      * 商品分类修改时触发的事件
      */
     categoryChange(id) {
+      this.goodsForm.attributes = this.currentGoods.attributes;
       const category = this.categoryList.find(item => item._id === id);
-      this.goodsForm.attributes = category.attributes;
+      category.attributes.forEach(item => {
+        if (item.messageType && item.type) {
+          this.goodsForm.attributes = this.goodsForm.attributes.concat(
+            category.attributes
+          );
+        }
+      });
     },
 
     /**

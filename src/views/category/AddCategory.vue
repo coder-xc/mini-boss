@@ -65,7 +65,7 @@
               :key="index"
             >
               <el-form-item label="属性名称" prop>
-                <el-input v-model="categoryForm.attributes[index].name"></el-input>
+                <el-input placeholder="请输入属性名称" v-model="categoryForm.attributes[index].name"></el-input>
               </el-form-item>
               <el-form-item label="属性类型">
                 <el-select
@@ -300,8 +300,7 @@ export default {
      * 监听属性值类型select下拉框的改变
      */
     selectChange(index) {
-      debugger
-      if (this.categoryForm.attribute[index].messageType === "array") {
+      if (this.categoryForm.attributes[index].messageType === "array") {
         this.categoryForm.attributes[index].message = [];
       } else {
         this.categoryForm.attributes[index].message = "";
